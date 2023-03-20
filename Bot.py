@@ -174,18 +174,21 @@ def callback_handler(call):
                               f"Price        :- {num_pages * print_price_list[ty]}"
                         bot.send_document(chat_id="-1001674209692", document=file, caption=cap)
                         bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-                        bot.send_message(user_id,  "Thank you for working with us.\n"
-                                              "Within 5 Min we will call you if you paid.\n"
-                                              "if don't get any response from us contact us 0912345678 ")
+                        bot.send_message(user_id, "Thank you for working with us.\n"
+                                                  "Within 5 Min we will call you if you paid.\n"
+                                                  "if don't get any response from us contact us 0912345678 ")
                 elif "==" in call.data:
                     query = call.data[2:]
-                    markup = types.InlineKeyboardMarkup(row_width=2)
-                    for ans in range(1, 10):
-                        btn = types.InlineKeyboardButton(
-                            ans, callback_data=f"||{ans}_{query}")
-                        markup.add(btn)
+                    markup = types.InlineKeyboardMarkup(row_width=3)
+
+                    a = [types.InlineKeyboardButton(
+                        ans, callback_data=f"||{ans}_{query}") for ans in range(1, 13)]
+                    markup.add(*a[0:3])
+                    markup.add(*a[3:6])
+                    markup.add(*a[6:9])
+                    markup.add(*a[9:12])
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-                    bot.send_message(user_id, "How much you want", reply_markup=markup)
+                    bot.send_message(user_id, "How much do you want", reply_markup=markup)
                 elif "||" in call.data:
                     no, typpe = call.data[2:].split("_")
                     price = int(no) * ertib_price_list[typpe]
