@@ -107,7 +107,6 @@ def callback_handler(call):
     typ = call.data[2:]
     with open('users.json', 'r') as f:
         data = json.load(f)
-
         if str(user_id) in data:
             if "**" in call.data:
                 file_name = call.data.split("+")[1]
