@@ -9,16 +9,6 @@ bot = telebot.TeleBot('6034077201:AAHICg_ZMoB6knQ8atPjdmmt9DgvKE_Obec')
 
 data = {}
 
-
-def wait(func):
-    def wrapper(message):
-        bot.send_message(message.chat.id, "Sorry, We only accept PDF or DOC and DOCX files.")
-        func(message)
-        bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
-
-    return wrapper
-
-
 @bot.message_handler(commands=['start'])
 def start_command(message):
     # Check if user is already registered
