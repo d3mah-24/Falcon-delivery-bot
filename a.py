@@ -111,7 +111,6 @@ def callback_handler(call):
         if str(user_id) in data:
             if "**" in call.data:
                 file_name = call.data.split("+")[1]
-
                 # print(file_name, 99)
                 ext = file_name.split(".")[-1]
                 if ext == "pdf":
