@@ -99,7 +99,6 @@ pop = {
     "Normal": 45, "Normal Plus": 50, "Special": 55
 }
 
-
 # create a function to handle user input
 @bot.callback_query_handler(func=lambda call: True)
 def callback_handler(call):
