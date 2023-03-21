@@ -302,8 +302,8 @@ def phone_input(message):
 
 while True:
     try:
-        bot.polling(none_stop=True)
+        bot.polling(non_stop=True)
         # ConnectionError and ReadTimeout because of possible timout of the requests library
         # maybe there are others, therefore Exception
     except Exception:
-        time.sleep(5)
+        time.sleep(3)
