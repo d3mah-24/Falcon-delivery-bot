@@ -180,7 +180,6 @@ def callback_handler(call):
                 elif "==" in call.data:
                     query = call.data[2:]
                     markup = types.InlineKeyboardMarkup(row_width=3)
-
                     a = [types.InlineKeyboardButton(
                         ans, callback_data=f"||{ans}_{query}") for ans in range(1, 13)]
                     markup.add(*a[0:3])
@@ -275,25 +274,30 @@ def menu():
 
 @bot.message_handler(content_types=['contact'])
 def phone_input(message):
-    phone_number = message.contact.phone_number
-    user_id = message.from_user.id
-
+    user_id = message.chat.id
     with open('users.json', 'r') as f:
         data = json.load(f)
+        if str(user_id) in data:
+            phone_number = message.contact.phone_number
+            user_id = message.from_user.id
 
-    with open('users.json', 'w') as f:
-        username = message.from_user.username
-        first_name = message.from_user.first_name
-        last_name = message.from_user.last_name if message.from_user.last_name else ""
+            with open('users.json', 'r') as f:
+                data = json.load(f)
 
-        data[str(message.chat.id)]["first_name"] = first_name
-        data[str(message.chat.id)]["last_name"] = last_name
-        data[str(message.chat.id)]["username"] = username
-        data[str(message.chat.id)]["phone_number"] = phone_number
-        json.dump(dict(data), f, indent=4)
+            with open('users.json', 'w') as f:
+                username = message.from_user.username
+                first_name = message.from_user.first_name
+                last_name = message.from_user.last_name if message.from_user.last_name else ""
 
-    bot.send_message(
-        user_id, "Thanks for registering,\n Choose an option:", reply_markup=menu())
+                data[str(message.chat.id)]["first_name"] = first_name
+                data[str(message.chat.id)]["last_name"] = last_name
+                data[str(message.chat.id)]["username"] = username
+                data[str(message.chat.id)]["phone_number"] = phone_number
+                json.dump(dict(data), f, indent=4)
+            bot.send_message(
+                user_id, "Thanks for registering,\n Choose an option:", reply_markup=menu())
+        else:
+            bot.send_message(user_id, "Please register first /start.")
 
 
 bot.polling()
