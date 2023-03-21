@@ -288,7 +288,6 @@ def phone_input(message):
                 username = message.from_user.username
                 first_name = message.from_user.first_name
                 last_name = message.from_user.last_name if message.from_user.last_name else ""
-
                 data[str(message.chat.id)]["first_name"] = first_name
                 data[str(message.chat.id)]["last_name"] = last_name
                 data[str(message.chat.id)]["username"] = username
