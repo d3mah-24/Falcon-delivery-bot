@@ -1,4 +1,5 @@
 import json
+import time
 
 import PyPDF2
 import docx
@@ -299,4 +300,10 @@ def phone_input(message):
             bot.send_message(user_id, "Please register first /start.")
 
 
-bot.polling()
+while True:
+    try:
+        bot.polling(none_stop=True)
+        # ConnectionError and ReadTimeout because of possible timout of the requests library
+        # maybe there are others, therefore Exception
+    except Exception:
+        time.sleep(5)
