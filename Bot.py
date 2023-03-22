@@ -1,5 +1,5 @@
 import json
-import time
+import uuid
 
 import PyPDF2
 import docx
@@ -17,20 +17,50 @@ def start_command(message):
     # Check if user is already registered
     with open('users.json', 'r') as f:
         data = json.load(f)
-        if str(message.chat.id) in data:
-            name = data[str(message.chat.id)]["real_name"]
-            bot.send_message(message.chat.id, f"Welcome back, {name}! ",
-                             reply_markup=menu())
-        else:
+        my_id = str(message.from_user.id)
+
+        if  str(message.from_user.id) in data:
+            if  data[ str(message.from_user.id)]["phone_number"] :
+                name = data[ str(message.from_user.id)]["real_name"]
+                bot.send_message(message.chat.id, f"Welcome back, {name}! ",
+                                 reply_markup=menu())
+            else:
+                keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+                button = types.KeyboardButton(text="Send Phone Number", request_contact=True)
+                keyboard.add(button)
+                bot.send_message(message.chat.id, f"Please click 'Send Phone Number' button", reply_markup=keyboard)
+        elif message.text.startswith('/start '):
+            with open('coupon.json', 'r') as fl:
+                coupon = json.load(fl)
+            coupon_code = message.text.split(' ')[1]
+            user_id = coupon[coupon_code]["id"]
+            if coupon_code in coupon and my_id not in coupon[coupon_code]["referred"]:
+                data[my_id] = {"invited": user_id}
+                coupon[coupon_code]["referred"].append(my_id)
+                coupon[coupon_code]["count"] += 1
+                with open("coupon.json", "w") as fg:
+                    json.dump(dict(coupon), fg, indent=4)
+            with open("users.json", "w") as fg:
+                json.dump(dict(data), fg, indent=4)
             bot.send_message(message.chat.id, "Hi! Please enter your name.", reply_markup=ReplyKeyboardRemove())
+
+            return
+        else:
+            data[my_id] = {"invited": None}
+            with open("users.json", "w") as fg:
+                json.dump(dict(data), fg, indent=4)
+            bot.send_message(message.chat.id, "Hi!vv Please enter your name.", reply_markup=ReplyKeyboardRemove())
+
+
+
 
 
 @bot.message_handler(func=lambda message: message.text == "Delivery")
 def Delivery(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
-        if str(message.chat.id) in data:
-            if data[str(message.chat.id)]["phone_number"]:
+        if  str(message.from_user.id) in data:
+            if data[ str(message.from_user.id)]["phone_number"]:
                 bot.send_message(message.chat.id, "Ertib from Tulu dimtu", reply_markup=delivery_choice())
             else:
                 keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
@@ -47,6 +77,21 @@ def Stationary(message):
     bot.send_message(message.chat.id, "Stationary ......")
 
 
+@bot.message_handler(func=lambda message: message.text == "Referral")
+def Referral(message):
+    user_id =  str(message.from_user.id)
+    with open('users.json', 'r') as f:
+        data = json.load(f)
+        if str(user_id) in data:
+            with open("coupon.json", "r") as file:
+                coupon = json.load(file)
+            link = data[user_id]["link"]
+            count = coupon[data[user_id]["coupon_code"]]["count"]
+            bot.send_message(message.chat.id, f"Your Referral link :- {link} \n"
+                                              f"You Invited {count} Persons"
+                             )
+
+
 @bot.message_handler(func=lambda message: message.text == "Help")
 def Help(message):
     bot.send_message(message.chat.id, "Help")
@@ -56,8 +101,8 @@ def Help(message):
 def Pprint(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
-        if str(message.chat.id) in data:
-            if data[str(message.chat.id)]["phone_number"]:
+        if str(message.from_user.id) in data:
+            if data[ str(message.from_user.id)]["phone_number"]:
                 bot.send_message(message.chat.id, "Please send your file in doc or pdf format")
 
             else:
@@ -70,37 +115,43 @@ def Pprint(message):
             bot.send_message(message.chat.id, "Please register first /start.")
 
 
-@bot.message_handler(content_types=['document'])
+@bot.message_handler(content_types=['audio', 'photo', 'voice', 'video', 'document', 'sticker'])
 def handle_document(message):
-    # user_id = message.from_user.id
     # filter only PDF and DOCX files
-    with open('users.json', 'r') as f:
-        data = json.load(f)
-        if str(message.chat.id) in data:
-            if data[str(message.chat.id)]["phone_number"]:
-                if message.document.mime_type == 'application/pdf' or message.document.file_name.endswith(
-                        '.docx') or message.document.file_name.endswith('.doc'):
-                    # save the file to disk
-                    file_id = message.document.file_id
-                    file_info = bot.get_file(file_id)
-                    file_path = file_info.file_path
-                    file_name = message.document.file_name
-                    print(file_name, 999)
-                    downloaded_file = bot.download_file(file_path)
-                    with open(file_name, 'wb') as new_file:
-                        new_file.write(downloaded_file)
-                    bot.send_message(message.chat.id, "What do you want", reply_markup=print_choice(file_name))
+    # print(message.document)
+    try:
+        if message.document.file_name.endswith('.docx') or message.document.file_name.endswith(
+                '.doc') or message.document.file_name.endswith('.pdf'):
+            with open('users.json', 'r') as f:
+                data = json.load(f)
+                if  str(message.from_user.id) in data:
+                    if data[ str(message.from_user.id)]["phone_number"]:
+
+                        # save the file to disk
+                        file_id = message.document.file_id
+                        file_info = bot.get_file(file_id)
+                        file_path = file_info.file_path
+                        file_name = message.document.file_name
+                        # print(file_name, 999)
+                        downloaded_file = bot.download_file(file_path)
+                        with open(file_name, 'wb') as new_file:
+                            new_file.write(downloaded_file)
+                        bot.send_message(message.chat.id, "What do you want", reply_markup=print_choice(file_name))
+
+                    else:
+                        keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+                        button = types.KeyboardButton(text="Send Phone Number", request_contact=True)
+                        keyboard.add(button)
+                        bot.send_message(message.chat.id, f"Please click 'Send Phone Number' button",
+                                         reply_markup=keyboard)
                 else:
-                    bot.send_message(message.chat.id, "Sorry, We only accept PDF or DOC and DOCX files.")
-                    bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
-            else:
-                keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-                button = types.KeyboardButton(text="Send Phone Number", request_contact=True)
-                keyboard.add(button)
-                bot.send_message(message.chat.id, f"Please click 'Send Phone Number' button",
-                                 reply_markup=keyboard)
+                    bot.send_message(message.chat.id, "Please register first /start.")
         else:
-            bot.send_message(message.chat.id, "Please register first /start.")
+            bot.send_message(message.chat.id, "Sorry, We only accept PDF or DOC and DOCX files.")
+            bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+    except:
+        bot.send_message(message.chat.id, "Sorry, We only accept PDF or DOC and DOCX files.")
+        bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
 
 
 def print_choice(file_name):
@@ -171,7 +222,8 @@ def callback_handler(call):
                         ty = typ.split("+")[-1]
                         cap = f"From         :- {data[str(user_id)]['real_name']}\n" \
                               f"Phone Number :- {data[str(user_id)]['phone_number']}\n" \
-                              f"Type         :- {ty}|nNo page      :- {num_pages}\n" \
+                              f"Type         :- {ty}\n"\
+                              f"No page      :- {num_pages}\n" \
                               f"Price        :- {num_pages * print_price_list[ty]}"
                         bot.send_document(chat_id="-1001674209692", document=file, caption=cap)
                         bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
@@ -239,26 +291,33 @@ def name_input(message):
     keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     button = types.KeyboardButton(text="Send Phone Number", request_contact=True)
     keyboard.add(button)
+    # print(str(message.from_user.id) , data)
+
     if "09" in text or "+251" in text:
         bot.send_message(message.chat.id,
                          f"Please, Don't write your phone number just click 'Send Phone Number' button",
                          reply_markup=keyboard)
-    elif str(message.chat.id) in data:
-        if data[str(message.chat.id)]["phone_number"] is None:
-            bot.send_message(message.chat.id,
-                             f"Please, Don't write your phone number just click 'Send Phone Number' button",
-                             reply_markup=keyboard)
-    elif str(message.chat.id) not in data:
+    # elif  str(message.from_user.id) in data:
+    #     if data[ str(message.from_user.id)]["phone_number"] is None:
+    #         bot.send_message(message.chat.id,
+    #                          f"Please, Don't write your phone number just click 'Send Phone Number' button",
+    #                          reply_markup=keyboard)
+    elif  str(message.from_user.id) in data:
         if " " not in text or len(text) < 7:
             bot.send_message(message.chat.id, "Please, enter your full name.", reply_markup=ReplyKeyboardRemove())
             return
-        print(message.chat.id, data)
+
         with open('users.json', 'w') as fz:
-            data[message.chat.id] = {"real_name": text, "phone_number": None}
+            data[ str(message.from_user.id)]["real_name"] = text
+            data[ str(message.from_user.id)]["phone_number"] = None
             json.dump(dict(data), fz, indent=4)
-        bot.send_message(message.chat.id, f"Thanks {text}! Please provide your phone number.", reply_markup=keyboard)
+        bot.send_message(message.chat.id, f"Thanks {text}! Please click 'Send Phone Number' button.",
+                         reply_markup=keyboard)
 
     # else:
+    #     bot.send_message(message.chat.id,
+    #                      f"Please, Don't write your phone number just click 'Send Phone Number' button",
+    #                      reply_markup=keyboard)
     #     bot.send_message(message.chat.id, f"Thanks {t ext}! Please provide your phone number.", reply_markup=keyboard)
 
 
@@ -268,42 +327,53 @@ def menu():
     item1 = telebot.types.KeyboardButton(text='Delivery')
     item2 = telebot.types.KeyboardButton(text='Print')
     item5 = telebot.types.KeyboardButton(text='Stationary')
-    item4 = telebot.types.KeyboardButton(text='Help')
+    item4 = telebot.types.KeyboardButton(text='Referral')
     markup.add(item1, item2, item4, item5, )
     return markup
 
 
 @bot.message_handler(content_types=['contact'])
 def phone_input(message):
-    user_id = message.chat.id
+    user_id =  str(message.from_user.id)
     with open('users.json', 'r') as f:
         data = json.load(f)
-        if str(user_id) in data:
+        if user_id in data:
             phone_number = message.contact.phone_number
-            user_id = message.from_user.id
+            # user_id = message.from_user.id
+            with open('users.json', 'r') as file:
+                data = json.load(file)
+            uu = str(uuid.uuid4())[:6]
+            with open('coupon.json', 'r') as file:
+                coupon = json.load(file)
+            with open('coupon.json', 'w') as files:
+                coupon[uu] = {"id":  str(message.from_user.id),
+                              "count": 0,
+                              "referred": []}
+                json.dump(dict(coupon), files, indent=4)
 
-            with open('users.json', 'r') as f:
-                data = json.load(f)
-
-            with open('users.json', 'w') as f:
+            with open('users.json', 'w') as files:
                 username = message.from_user.username
                 first_name = message.from_user.first_name
                 last_name = message.from_user.last_name if message.from_user.last_name else ""
-                data[str(message.chat.id)]["first_name"] = first_name
-                data[str(message.chat.id)]["last_name"] = last_name
-                data[str(message.chat.id)]["username"] = username
-                data[str(message.chat.id)]["phone_number"] = phone_number
-                json.dump(dict(data), f, indent=4)
+                data[user_id]["first_name"] = first_name
+                data[user_id]["last_name"] = last_name
+                data[user_id]["username"] = username
+                data[user_id]["phone_number"] = phone_number
+                data[user_id]["coupon_code"] = uu
+                data[user_id]["link"] = f"https://t.me/{bot.get_me().username}?start={uu}"
+
+                json.dump(dict(data), files, indent=4)
             bot.send_message(
                 user_id, "Thanks for registering,\n Choose an option:", reply_markup=menu())
         else:
             bot.send_message(user_id, "Please register first /start.")
 
 
-while True:
-    try:
-        bot.polling(non_stop=True)
-        # ConnectionError and ReadTimeout because of possible timout of the requests library
-        # maybe there are others, therefore Exception
-    except Exception:
-        time.sleep(3)
+# while True:
+#     try:
+bot.polling(non_stop=True)
+# ConnectionError and ReadTimeout because of possible timout of the requests library
+# maybe there are others, therefore Exception
+# except Exception as e:
+#     print(e)
+#     time.sleep(3)
