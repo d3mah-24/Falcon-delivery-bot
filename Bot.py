@@ -17,50 +17,46 @@ def start_command(message):
     # Check if user is already registered
     with open('users.json', 'r') as f:
         data = json.load(f)
-        my_id = str(message.from_user.id)
-
-        if  str(message.from_user.id) in data:
-            if  data[ str(message.from_user.id)]["phone_number"] :
-                name = data[ str(message.from_user.id)]["real_name"]
-                bot.send_message(message.chat.id, f"Welcome back, {name}! ",
-                                 reply_markup=menu())
-            else:
-                keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-                button = types.KeyboardButton(text="Send Phone Number", request_contact=True)
-                keyboard.add(button)
-                bot.send_message(message.chat.id, f"Please click 'Send Phone Number' button", reply_markup=keyboard)
-        elif message.text.startswith('/start '):
-            with open('coupon.json', 'r') as fl:
-                coupon = json.load(fl)
-            coupon_code = message.text.split(' ')[1]
-            user_id = coupon[coupon_code]["id"]
-            if coupon_code in coupon and my_id not in coupon[coupon_code]["referred"]:
-                data[my_id] = {"invited": user_id}
-                coupon[coupon_code]["referred"].append(my_id)
-                coupon[coupon_code]["count"] += 1
-                with open("coupon.json", "w") as fg:
-                    json.dump(dict(coupon), fg, indent=4)
-            with open("users.json", "w") as fg:
-                json.dump(dict(data), fg, indent=4)
-            bot.send_message(message.chat.id, "Hi! Please enter your name.", reply_markup=ReplyKeyboardRemove())
-
-            return
+    my_id = str(message.from_user.id)
+    if my_id in data:
+        if data[my_id]["phone_number"]:
+            name = data[my_id]["real_name"]
+            bot.send_message(message.chat.id, f"Welcome back, {name}! ",
+                             reply_markup=menu())
         else:
-            data[my_id] = {"invited": None}
-            with open("users.json", "w") as fg:
-                json.dump(dict(data), fg, indent=4)
-            bot.send_message(message.chat.id, "Hi!vv Please enter your name.", reply_markup=ReplyKeyboardRemove())
+            keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+            button = types.KeyboardButton(text="Send Phone Number", request_contact=True)
+            keyboard.add(button)
+            bot.send_message(message.chat.id, f"Please click 'Send Phone Number' button", reply_markup=keyboard)
+    elif message.text.startswith('/start '):
+        with open('coupon.json', 'r') as fl:
+            coupon = json.load(fl)
+        coupon_code = message.text.split(' ')[1]
+        user_id = coupon[coupon_code]["id"]
+        if coupon_code in coupon and my_id not in coupon[coupon_code]["referred"]:
+            data[my_id] = {"invited": user_id}
+            coupon[coupon_code]["referred"].append(my_id)
+            coupon[coupon_code]["count"] += 1
+            with open("coupon.json", "w") as fg:
+                json.dump(dict(coupon), fg, indent=4)
+        with open("users.json", "w") as fg:
+            json.dump(dict(data), fg, indent=4)
+        bot.send_message(message.chat.id, "Hi! Please enter your name.", reply_markup=ReplyKeyboardRemove())
 
-
-
+        return
+    else:
+        data[my_id] = {"invited": None}
+        with open("users.json", "w") as fg:
+            json.dump(dict(data), fg, indent=4)
+        bot.send_message(message.chat.id, "Hi! Please enter your name.", reply_markup=ReplyKeyboardRemove())
 
 
 @bot.message_handler(func=lambda message: message.text == "Delivery")
 def Delivery(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
-        if  str(message.from_user.id) in data:
-            if data[ str(message.from_user.id)]["phone_number"]:
+        if str(message.from_user.id) in data:
+            if data[str(message.from_user.id)]["phone_number"]:
                 bot.send_message(message.chat.id, "Ertib from Tulu dimtu", reply_markup=delivery_choice())
             else:
                 keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
@@ -79,7 +75,7 @@ def Stationary(message):
 
 @bot.message_handler(func=lambda message: message.text == "Referral")
 def Referral(message):
-    user_id =  str(message.from_user.id)
+    user_id = str(message.from_user.id)
     with open('users.json', 'r') as f:
         data = json.load(f)
         if str(user_id) in data:
@@ -87,8 +83,10 @@ def Referral(message):
                 coupon = json.load(file)
             link = data[user_id]["link"]
             count = coupon[data[user_id]["coupon_code"]]["count"]
+            coins = coupon[data[user_id]["coupon_code"]]["coins"]
             bot.send_message(message.chat.id, f"Your Referral link :- {link} \n"
-                                              f"You Invited {count} Persons"
+                                              f"You Invited {count} Persons\n"
+                                              f"You Have {coins} Coin{['s'][coins > 1]}."
                              )
 
 
@@ -102,7 +100,7 @@ def Pprint(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
         if str(message.from_user.id) in data:
-            if data[ str(message.from_user.id)]["phone_number"]:
+            if data[str(message.from_user.id)]["phone_number"]:
                 bot.send_message(message.chat.id, "Please send your file in doc or pdf format")
 
             else:
@@ -124,8 +122,8 @@ def handle_document(message):
                 '.doc') or message.document.file_name.endswith('.pdf'):
             with open('users.json', 'r') as f:
                 data = json.load(f)
-                if  str(message.from_user.id) in data:
-                    if data[ str(message.from_user.id)]["phone_number"]:
+                if str(message.from_user.id) in data:
+                    if data[str(message.from_user.id)]["phone_number"]:
 
                         # save the file to disk
                         file_id = message.document.file_id
@@ -216,20 +214,25 @@ def callback_handler(call):
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
                 elif "--" in call.data:
                     file_name = call.data.split("+")[1]
-
+                    num_pages = int(typ.split("+")[0])
+                    ty = typ.split("+")[-1]
+                    cap = f"From         :- {data[str(user_id)]['real_name']}\n" \
+                          f"Phone Number :- {data[str(user_id)]['phone_number']}\n" \
+                          f"Type         :- {ty}\n" \
+                          f"No page      :- {num_pages}\n" \
+                          f"Price        :- {num_pages * print_price_list[ty]}"
                     with open(file_name, 'rb') as file:
-                        num_pages = int(typ.split("+")[0])
-                        ty = typ.split("+")[-1]
-                        cap = f"From         :- {data[str(user_id)]['real_name']}\n" \
-                              f"Phone Number :- {data[str(user_id)]['phone_number']}\n" \
-                              f"Type         :- {ty}\n"\
-                              f"No page      :- {num_pages}\n" \
-                              f"Price        :- {num_pages * print_price_list[ty]}"
                         bot.send_document(chat_id="-1001674209692", document=file, caption=cap)
-                        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-                        bot.send_message(user_id, "Thank you for working with us.\n"
-                                                  "Within 5 Min we will call you if you paid.\n"
-                                                  "if don't get any response from us contact us 0912345678 ")
+                    with open('coupon.json', 'r') as file:
+                        coupon = json.load(file)
+                    with open('coupon.json', 'w') as files:
+                        coupon[data[data[str(user_id)]['invited']]["coupon_code"]]["coins"] +=10
+                        json.dump(dict(coupon), files, indent=4)
+                    bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+
+                    bot.send_message(user_id, "Thank you for working with us.\n"
+                                              "Within 5 Min we will call you if you paid.\n"
+                                              "if don't get any response from us contact us 0912345678 ")
                 elif "==" in call.data:
                     query = call.data[2:]
                     markup = types.InlineKeyboardMarkup(row_width=3)
@@ -268,6 +271,11 @@ def callback_handler(call):
                           f"\n  Quantity      :- {Quantity}" \
                           f"\n Price        :- {price}"
                     bot.send_message(chat_id="-1001674209692", text=cap)
+                    with open('coupon.json', 'r') as file:
+                        coupon = json.load(file)
+                    with open('coupon.json', 'w') as files:
+                        coupon[data[data[str(user_id)]['invited']]["coupon_code"]]["coins"] +=10
+                        json.dump(dict(coupon), files, indent=4)
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
                     bot.send_message(user_id, "Thank you for working with us.\n"
                                               "Within 5 Min we will call you if you paid.\n"
@@ -302,14 +310,14 @@ def name_input(message):
     #         bot.send_message(message.chat.id,
     #                          f"Please, Don't write your phone number just click 'Send Phone Number' button",
     #                          reply_markup=keyboard)
-    elif  str(message.from_user.id) in data:
+    elif str(message.from_user.id) in data:
         if " " not in text or len(text) < 7:
             bot.send_message(message.chat.id, "Please, enter your full name.", reply_markup=ReplyKeyboardRemove())
             return
 
         with open('users.json', 'w') as fz:
-            data[ str(message.from_user.id)]["real_name"] = text
-            data[ str(message.from_user.id)]["phone_number"] = None
+            data[str(message.from_user.id)]["real_name"] = text
+            data[str(message.from_user.id)]["phone_number"] = None
             json.dump(dict(data), fz, indent=4)
         bot.send_message(message.chat.id, f"Thanks {text}! Please click 'Send Phone Number' button.",
                          reply_markup=keyboard)
@@ -334,7 +342,7 @@ def menu():
 
 @bot.message_handler(content_types=['contact'])
 def phone_input(message):
-    user_id =  str(message.from_user.id)
+    user_id = str(message.from_user.id)
     with open('users.json', 'r') as f:
         data = json.load(f)
         if user_id in data:
@@ -346,9 +354,11 @@ def phone_input(message):
             with open('coupon.json', 'r') as file:
                 coupon = json.load(file)
             with open('coupon.json', 'w') as files:
-                coupon[uu] = {"id":  str(message.from_user.id),
+                coupon[uu] = {"id": str(message.from_user.id),
                               "count": 0,
-                              "referred": []}
+                              "referred": [],
+                              "coins": 0
+                              }
                 json.dump(dict(coupon), files, indent=4)
 
             with open('users.json', 'w') as files:
