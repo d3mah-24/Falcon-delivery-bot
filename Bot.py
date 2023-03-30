@@ -1,4 +1,5 @@
 import json
+import time
 import uuid
 
 import PyPDF2
@@ -257,11 +258,12 @@ def callback_handler(call):
                         with open('coupon.json', 'r') as file:
                             coupon = json.load(file)
                         idd = typ.split("_")[-1]
-                        in_id = data[data[str(idd)]['invited']]
-                        in_coupon = in_id['coupon_code']
-                        with open('coupon.json', 'w') as files:
-                            coupon[in_coupon]["coins"] += 10
-                            json.dump(dict(coupon), files, indent=4)
+                        if data[str(idd)]['invited']:
+                            in_id = data[data[str(idd)]['invited']]
+                            in_coupon = in_id['coupon_code']
+                            with open('coupon.json', 'w') as files:
+                                coupon[in_coupon]["coins"] += 10
+                                json.dump(dict(coupon), files, indent=4)
                         bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                                       reply_markup=None)
                         bot.send_message(idd, "Payment verified")
@@ -406,11 +408,11 @@ def phone_input(message):
             bot.send_message(user_id, "Please register first /start.")
 
 
-# while True:
-#     try:
-bot.polling(non_stop=True)
-# ConnectionError and ReadTimeout because of possible timeout of the requests library
-# maybe there are others, therefore Exception
-# except Exception as e:
-#     print(e)
-#     time.sleep(3)
+while True:
+    try:
+        bot.polling(non_stop=True)
+    # ConnectionError and ReadTimeout because of possible timeout of the requests library
+    # maybe there are others, therefore Exception
+    except Exception as e:
+        print(e)
+        time.sleep(3)
