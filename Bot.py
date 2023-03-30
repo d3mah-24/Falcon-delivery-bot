@@ -1,5 +1,4 @@
 import json
-import time
 import uuid
 
 import PyPDF2
@@ -230,7 +229,7 @@ def callback_handler(call):
                     mark = types.InlineKeyboardMarkup(row_width=2)
 
                     btn = types.InlineKeyboardButton(
-                        "Real", callback_data="{{Real")
+                        "Real", callback_data=f"((Real_{user_id}")
                     btn2 = types.InlineKeyboardButton(
                         "Fake", callback_data="{{Fake")
                     mark.add(btn, btn2)
@@ -253,12 +252,15 @@ def callback_handler(call):
                     markup.add(*a[9:12])
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
                     bot.send_message(user_id, "How much do you want", reply_markup=markup)
-                elif "{{" in call.data:
-                    if typ == "Real":
+                elif "((" in call.data:
+                    if "Real" in typ :
                         with open('coupon.json', 'r') as file:
                             coupon = json.load(file)
+                        idd=typ.split("_")[-1]
+                        in_id = data[data[str(idd)]['invited']]
+                        in_coupon = in_id['coupon_code']
                         with open('coupon.json', 'w') as files:
-                            coupon[data[data[str(user_id)]['invited']]["coupon_code"]]["coins"] += 10
+                            coupon[in_coupon]["coins"] += 10
                             json.dump(dict(coupon), files, indent=4)
                 elif "||" in call.data:
                     no, typpe = call.data[2:].split("_")
@@ -289,7 +291,7 @@ def callback_handler(call):
                     mark = types.InlineKeyboardMarkup(row_width=2)
 
                     btn = types.InlineKeyboardButton(
-                        "Real", callback_data="{{Real")
+                        "Real", callback_data=f"((Real_{user_id}")
                     btn2 = types.InlineKeyboardButton(
                         "Fake", callback_data="{{Fake")
                     mark.add(btn, btn2)
@@ -399,11 +401,11 @@ def phone_input(message):
             bot.send_message(user_id, "Please register first /start.")
 
 
-while True:
-    try:
-        bot.polling(non_stop=True)
-    # ConnectionError and ReadTimeout because of possible timeout of the requests library
-    # maybe there are others, therefore Exception
-    except Exception as e:
-        print(e)
-        time.sleep(3)
+# while True:
+#     try:
+bot.polling(non_stop=True)
+# ConnectionError and ReadTimeout because of possible timeout of the requests library
+# maybe there are others, therefore Exception
+# except Exception as e:
+#     print(e)
+#     time.sleep(3)
