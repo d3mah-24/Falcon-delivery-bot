@@ -231,7 +231,7 @@ def callback_handler(call):
                     btn = types.InlineKeyboardButton(
                         "Real", callback_data=f"((Real_{user_id}")
                     btn2 = types.InlineKeyboardButton(
-                        "Fake", callback_data="{{Fake")
+                        "Fake", callback_data=f"((Fake_{user_id}")
                     mark.add(btn, btn2)
                     with open(file_name, 'rb') as file:
                         bot.send_document(chat_id="-1001674209692", document=file, caption=cap, reply_markup=mark)
@@ -253,15 +253,22 @@ def callback_handler(call):
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
                     bot.send_message(user_id, "How much do you want", reply_markup=markup)
                 elif "((" in call.data:
-                    if "Real" in typ :
+                    if "Real" in typ:
                         with open('coupon.json', 'r') as file:
                             coupon = json.load(file)
-                        idd=typ.split("_")[-1]
+                        idd = typ.split("_")[-1]
                         in_id = data[data[str(idd)]['invited']]
                         in_coupon = in_id['coupon_code']
                         with open('coupon.json', 'w') as files:
                             coupon[in_coupon]["coins"] += 10
                             json.dump(dict(coupon), files, indent=4)
+                        bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                                      reply_markup=None)
+                        bot.send_message(idd, "Payment verified")
+
+                        return
+                    bot.send_message(typ.split("_")[-1], "Payment not verified")
+                    bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
                 elif "||" in call.data:
                     no, typpe = call.data[2:].split("_")
                     price = int(no) * ertib_price_list[typpe]
@@ -275,26 +282,24 @@ def callback_handler(call):
                           f"Payment Methods  \n" \
                           f"   - CBE (100987543) \n" \
                           f"   - Telebirr (0987654321) "
-
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-
                     bot.send_message(call.message.chat.id, cap, reply_markup=markup)
                 elif "!!" in call.data:
                     Quantity = int(typ.split("+")[0])
                     ty = call.data.split("+")[-1]
                     price = typ.split("+")[1]
-                    cap = f"From :- {data[str(user_id)]['real_name']} " \
-                          f"\n Phone Number :- {data[str(user_id)]['phone_number']} " \
-                          f"\n Type         :- {ty} Ertib " \
-                          f"\n  Quantity      :- {Quantity}" \
-                          f"\n Price        :- {price}"
+                    cap = f"From :- {data[str(user_id)]['real_name']}   " \
+                          f"\n Phone Number :- {data[str(user_id)]['phone_number']}  " \
+                          f" \n Type         :- {ty} Ertib   " \
+                          f" \n  Quantity      :- {Quantity}" \
+                          f" \n Price        :- {price} "
                     mark = types.InlineKeyboardMarkup(row_width=2)
 
-                    btn = types.InlineKeyboardButton(
+                    btnn = types.InlineKeyboardButton(
                         "Real", callback_data=f"((Real_{user_id}")
-                    btn2 = types.InlineKeyboardButton(
-                        "Fake", callback_data="{{Fake")
-                    mark.add(btn, btn2)
+                    btnn2 = types.InlineKeyboardButton(
+                        "Fake", callback_data=f"((Fake_{user_id}")
+                    mark.add(btnn, btnn2)
                     bot.send_message(chat_id="-1001674209692", text=cap, reply_markup=mark)
 
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
