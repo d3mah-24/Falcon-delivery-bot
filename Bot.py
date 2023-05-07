@@ -35,7 +35,7 @@ def start_command(message):
                 keyboard.add(button)
                 bot.send_message(message.chat.id, Please_Send_Phone[data[my_id]["lang"]], reply_markup=keyboard)
         else:
-            bot.send_message(message.chat.id, enter_your_name[data[my_id]["lang"]], reply_markup=ReplyKeyboardRemove())
+            bot.send_message(message.chat.id, "Hi! Please enter your name.", reply_markup=ReplyKeyboardRemove())
 
     elif message.text.startswith('/start '):
         with open('coupon.json', 'r') as fl:
@@ -43,7 +43,7 @@ def start_command(message):
         coupon_code = message.text.split(' ')[1]
         user_id = coupon[coupon_code]["id"]
         if coupon_code in coupon and my_id not in coupon[coupon_code]["referred"]:
-            data[my_id] = {"invited": user_id, "lang": "ENGLISH"}
+            data[my_id] = {"invited": user_id}
             coupon[coupon_code]["referred"].append(my_id)
             coupon[coupon_code]["count"] += 1
             with open("coupon.json", "w") as fg:
@@ -54,13 +54,13 @@ def start_command(message):
 
         return
     else:
-        data[my_id] = {"invited": None}
+        data[my_id] = {"invited": None, "lang": "ENGLISH"}
         with open("users.json", "w") as fg:
             json.dump(dict(data), fg, indent=4)
         bot.send_message(message.chat.id, enter_your_name[data[my_id]["lang"]], reply_markup=ReplyKeyboardRemove())
 
 
-@bot.message_handler(func=lambda message: message.text == "Delivery")
+@bot.message_handler(func=lambda message: message.text in ["Delivery","ምብፃሕ","Qaqqabsiisuu","ማድረስ"])
 def Delivery(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
@@ -78,9 +78,27 @@ def Delivery(message):
             bot.send_message(message.chat.id, register_first[data[my_id]["lang"]])
 
 
-@bot.message_handler(func=lambda message: message.text == "Stationary")
+@bot.message_handler(func=lambda message: message.text == "Language")
 def Stationary(message):
-    bot.send_message(message.chat.id, "Stationary ......")
+    with open('users.json', 'r') as f:
+        data = json.load(f)
+    my_id = str(message.from_user.id)
+    markup = types.InlineKeyboardMarkup()
+    btn = types.InlineKeyboardButton(
+        "ENGLISH",
+        callback_data=f"ENGLISH")
+    btn2 = types.InlineKeyboardButton(
+        "AFFAN_OROMO",
+        callback_data=f"AFFAN_OROMO")
+    btn3 = types.InlineKeyboardButton(
+        "ትግርኛ",
+        callback_data=f"Tigrinya")
+    btn33 = types.InlineKeyboardButton(
+        "AMHARIC",
+        callback_data=f"AMHARIC")
+
+    markup.add(btn, btn2, btn3, btn33)
+    bot.send_message(message.chat.id, c_lang[data[my_id]["lang"]], reply_markup=markup)
 
 
 @bot.message_handler(func=lambda message: message.text == "Referral")
@@ -96,9 +114,7 @@ def Referral(message):
             coins = coupon[data[user_id]["coupon_code"]]["coins"]
             bot.send_message(message.chat.id, referral_link[data[user_id]["lang"]].format(link))
             bot.send_message(message.chat.id,
-                             invite_have[data[user_id]["lang"]].format(count, coins)
-
-                             )
+                             invite_have[data[user_id]["lang"]].format(count, coins))
 
 
 @bot.message_handler(func=lambda message: message.text == "Help")
@@ -106,7 +122,7 @@ def Help(message):
     bot.send_message(message.chat.id, "Help")
 
 
-@bot.message_handler(func=lambda message: message.text == "Print")
+@bot.message_handler(func=lambda message: message.text in ["Print"])
 def Pprint(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
@@ -193,6 +209,8 @@ ertib_price_list = {
 def callback_handler(call):
     user_id = call.from_user.id
     typ = call.data[2:]
+    print(call.data)
+
     with open('users.json', 'r') as f:
         data = json.load(f)
         if str(user_id) in data:
@@ -216,6 +234,13 @@ def callback_handler(call):
                     markup.add(btn)
                     cap = Welcome_back[data[str(user_id)]["lang"]].format(num_pages, price)
                     bot.send_message(call.message.chat.id, cap, reply_markup=markup)
+                    bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                elif call.data in [ "ENGLISH","AMHARIC","AFFAN_OROMO","Tigrinya" ]:
+                    with open('users.json', 'w') as fz:
+                        data[str(user_id)]["lang"] = call.data
+
+                        json.dump(dict(data), fz, indent=4)
+                    # bot.send_message(call.message.chat.id, cap, reply_markup=markup)
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
                 elif "--" in call.data:
                     file_name = call.data.split("+")[1]
@@ -275,7 +300,7 @@ def callback_handler(call):
                     btn = types.InlineKeyboardButton(
                         after_paid[data[str(user_id)]["lang"]], callback_data=f"!!{no}+{price}+{typpe}")
                     markup.add(btn)
-                    cap = payment_not_verified[data[str(user_id)]["lang"]].format(typpe, no, price)
+                    cap = capp[data[str(user_id)]["lang"]].format(typpe, no, price)
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
                     bot.send_message(call.message.chat.id, cap, reply_markup=markup)
                 elif "!!" in call.data:
@@ -316,18 +341,18 @@ def name_input(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
     keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-    button = types.KeyboardButton(text=Send_Phone[data[str(user_id)]["lang"]], request_contact=True)
+    button = types.KeyboardButton(text=Send_Phone[data[user_id]["lang"]], request_contact=True)
     keyboard.add(button)
 
     if user_id in data:
-        if len(data[user_id]) < 2:
+        if len(data[user_id]) < 3:
             if "09" in text or "251" in text:
                 bot.send_message(message.chat.id,
                                  dont_write[data[user_id]["lang"]],
                                  reply_markup=keyboard)
                 return
             if " " not in text or len(text) < 7:
-                bot.send_message(message.chat.id,  full_name[data[user_id]["lang"]], reply_markup=ReplyKeyboardRemove())
+                bot.send_message(message.chat.id, full_name[data[user_id]["lang"]], reply_markup=ReplyKeyboardRemove())
                 return
             with open('users.json', 'w') as fz:
                 data[str(message.from_user.id)]["real_name"] = text
@@ -336,7 +361,7 @@ def name_input(message):
             bot.send_message(message.chat.id, thanks_click[data[user_id]["lang"]].format(text),
                              reply_markup=keyboard)
         elif data[user_id]["phone_number"] is None:
-            bot.send_message(message.chat.id,Please_Send_Phone[data[user_id]["lang"]],
+            bot.send_message(message.chat.id, Please_Send_Phone[data[user_id]["lang"]],
                              reply_markup=keyboard)
 
     else:
@@ -344,7 +369,7 @@ def name_input(message):
             data[str(message.from_user.id)]["real_name"] = text
             data[str(message.from_user.id)]["phone_number"] = None
             json.dump(dict(data), fz, indent=4)
-        bot.send_message(message.chat.id,  thanks_click[data[user_id]["lang"]].format(text),
+        bot.send_message(message.chat.id, thanks_click[data[user_id]["lang"]].format(text),
                          reply_markup=keyboard)
 
 
@@ -353,7 +378,7 @@ def menu():
         row_width=2, resize_keyboard=True)
     item1 = telebot.types.KeyboardButton(text='Delivery')
     item2 = telebot.types.KeyboardButton(text='Print')
-    item5 = telebot.types.KeyboardButton(text='Stationary')
+    item5 = telebot.types.KeyboardButton(text='Language')
     item4 = telebot.types.KeyboardButton(text='Referral')
     markup.add(item1, item2, item4, item5, )
     return markup
@@ -395,14 +420,12 @@ def phone_input(message):
             bot.send_message(
                 user_id, thanks_register[data[user_id]["lang"]], reply_markup=menu())
         else:
-            bot.send_message(user_id,register_first[data[user_id]["lang"]])
+            bot.send_message(user_id, register_first[data[user_id]["lang"]])
 
 
 while True:
     try:
         bot.polling(non_stop=True)
-    # ConnectionError and ReadTimeout because of possible timeout of the requests library
-    # maybe there are others, therefore Exception
     except Exception as e:
         print(e)
         time.sleep(3)
