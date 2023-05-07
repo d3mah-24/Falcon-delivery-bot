@@ -26,7 +26,7 @@ def start_command(message):
             if data[my_id]["phone_number"]:
                 name = data[my_id]["real_name"]
                 bot.send_message(message.chat.id, Welcome_back[data[my_id]["lang"]].format(name),
-                                 reply_markup=menu())
+                                 reply_markup=menu(my_id))
 
             else:
                 keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
@@ -78,7 +78,7 @@ def Delivery(message):
             bot.send_message(message.chat.id, register_first[data[my_id]["lang"]])
 
 
-@bot.message_handler(func=lambda message: message.text == "Language")
+@bot.message_handler(func=lambda message: message.text  in  ['Language', "ቋንቋ", "Afaan" ])
 def Stationary(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
@@ -101,7 +101,7 @@ def Stationary(message):
     bot.send_message(message.chat.id, c_lang[data[my_id]["lang"]], reply_markup=markup)
 
 
-@bot.message_handler(func=lambda message: message.text == "Referral")
+@bot.message_handler(func=lambda message: message.text in [  'My Balance', "የእኔ ቀሪ ሂሳብ ",  "Madaallii koo.",  "የእኔ ቀሪ ሂሳብ "])
 def Referral(message):
     user_id = str(message.from_user.id)
     with open('users.json', 'r') as f:
@@ -122,7 +122,7 @@ def Help(message):
     bot.send_message(message.chat.id, "Help")
 
 
-@bot.message_handler(func=lambda message: message.text in ["Print"])
+@bot.message_handler(func=lambda message: message.text in ["Print","ህትመት", "Maxxansa", "ሕትመት"])
 def Pprint(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
@@ -240,8 +240,8 @@ def callback_handler(call):
                         data[str(user_id)]["lang"] = call.data
 
                         json.dump(dict(data), fz, indent=4)
-                    # bot.send_message(call.message.chat.id, cap, reply_markup=markup)
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                    bot.send_message(call.message.chat.id,success[data[str(user_id)]["lang"]] , reply_markup=menu(str(user_id)))
                 elif "--" in call.data:
                     file_name = call.data.split("+")[1]
                     num_pages = int(typ.split("+")[0])
@@ -373,13 +373,13 @@ def name_input(message):
                          reply_markup=keyboard)
 
 
-def menu():
+def menu(user_id):
     markup = telebot.types.ReplyKeyboardMarkup(
         row_width=2, resize_keyboard=True)
-    item1 = telebot.types.KeyboardButton(text='Delivery')
-    item2 = telebot.types.KeyboardButton(text='Print')
-    item5 = telebot.types.KeyboardButton(text='Language')
-    item4 = telebot.types.KeyboardButton(text='Referral')
+    item1 = telebot.types.KeyboardButton(text=delivery[data[user_id]["lang"]])
+    item2 = telebot.types.KeyboardButton(text=printt[data[user_id]["lang"]])
+    item5 = telebot.types.KeyboardButton(text=Language[data[user_id]["lang"]])
+    item4 = telebot.types.KeyboardButton(text=Referral[data[user_id]["lang"]])
     markup.add(item1, item2, item4, item5, )
     return markup
 
@@ -418,7 +418,7 @@ def phone_input(message):
 
                 json.dump(dict(data), files, indent=4)
             bot.send_message(
-                user_id, thanks_register[data[user_id]["lang"]], reply_markup=menu())
+                user_id, thanks_register[data[user_id]["lang"]], reply_markup=menu(user_id))
         else:
             bot.send_message(user_id, register_first[data[user_id]["lang"]])
 

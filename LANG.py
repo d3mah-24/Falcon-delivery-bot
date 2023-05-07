@@ -173,10 +173,31 @@ delivery = {
     "Tigrinya": "ምብፃሕ"
 
 }
-delivery = {
-    "ENGLISH": "Delivery",
-    "AMHARIC": " ",
-    "AFFAN_OROMO": " ",
-    "Tigrinya": " "
+printt = {
+    "ENGLISH": "Print",
+    "AMHARIC": "ህትመት",
+    "AFFAN_OROMO": "Maxxansa",
+    "Tigrinya": "ሕትመት"
+
+}
+Language = {
+    "ENGLISH": 'Language',
+    "AMHARIC": "ቋንቋ",
+    "AFFAN_OROMO": "Afaan",
+    "Tigrinya": "ቋንቋ"
+
+}
+Referral = {
+    "ENGLISH": 'My Balance',
+    "AMHARIC": "የእኔ ቀሪ ሂሳብ ",
+    "AFFAN_OROMO": "Madaallii koo.",
+    "Tigrinya": "የእኔ ቀሪ ሂሳብ "
+
+}
+success = {
+    "ENGLISH": "Successfully Changed",
+    "AMHARIC": "በተሳካ ሁኔታ ተቀይሯል",
+    "AFFAN_OROMO": "Milkaa'inaan Jijjiirame",
+    "Tigrinya": "ብዓወት ተቐይሩ"
 
 }
