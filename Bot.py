@@ -1,5 +1,4 @@
 import json
-import time
 import uuid
 
 import PyPDF2
@@ -25,8 +24,15 @@ def start_command(message):
         if len(data[my_id]) > 2:
             if data[my_id]["phone_number"]:
                 name = data[my_id]["real_name"]
+                markup = telebot.types.ReplyKeyboardMarkup(
+                    row_width=2, resize_keyboard=True)
+                item1 = telebot.types.KeyboardButton(text=delivery[data[my_id]["lang"]])
+                item2 = telebot.types.KeyboardButton(text=printt[data[my_id]["lang"]])
+                item5 = telebot.types.KeyboardButton(text=Language[data[my_id]["lang"]])
+                item4 = telebot.types.KeyboardButton(text=Referral[data[my_id]["lang"]])
+                markup.add(item1, item2, item4, item5)
                 bot.send_message(message.chat.id, Welcome_back[data[my_id]["lang"]].format(name),
-                                 reply_markup=menu(my_id))
+                                 reply_markup=markup)
 
             else:
                 keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
@@ -60,7 +66,7 @@ def start_command(message):
         bot.send_message(message.chat.id, enter_your_name[data[my_id]["lang"]], reply_markup=ReplyKeyboardRemove())
 
 
-@bot.message_handler(func=lambda message: message.text in ["Delivery","ምብፃሕ","Qaqqabsiisuu","ማድረስ"])
+@bot.message_handler(func=lambda message: message.text in ["Delivery", "ምብፃሕ", "Qaqqabsiisuu", "ማድረስ"])
 def Delivery(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
@@ -78,7 +84,7 @@ def Delivery(message):
             bot.send_message(message.chat.id, register_first[data[my_id]["lang"]])
 
 
-@bot.message_handler(func=lambda message: message.text  in  ['Language', "ቋንቋ", "Afaan" ])
+@bot.message_handler(func=lambda message: message.text in ['Language', "ቋንቋ", "Afaan"])
 def Stationary(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
@@ -101,7 +107,8 @@ def Stationary(message):
     bot.send_message(message.chat.id, c_lang[data[my_id]["lang"]], reply_markup=markup)
 
 
-@bot.message_handler(func=lambda message: message.text in [  'My Balance', "የእኔ ቀሪ ሂሳብ ",  "Madaallii koo.",  "የእኔ ቀሪ ሂሳብ "])
+@bot.message_handler(
+    func=lambda message: message.text in ['My Balance', "የእኔ ቀሪ ሂሳብ", "Madaallii koo.", "የእኔ ቀሪ ሂሳብ "])
 def Referral(message):
     user_id = str(message.from_user.id)
     with open('users.json', 'r') as f:
@@ -122,7 +129,7 @@ def Help(message):
     bot.send_message(message.chat.id, "Help")
 
 
-@bot.message_handler(func=lambda message: message.text in ["Print","ህትመት", "Maxxansa", "ሕትመት"])
+@bot.message_handler(func=lambda message: message.text in ["Print", "ህትመት", "Maxxansa", "ሕትመት"])
 def Pprint(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
@@ -155,7 +162,6 @@ def handle_document(message):
                     file_info = bot.get_file(file_id)
                     file_path = file_info.file_path
                     file_name = message.document.file_name
-                    # print(file_name, 999)
                     downloaded_file = bot.download_file(file_path)
                     with open(file_name, 'wb') as new_file:
                         new_file.write(downloaded_file)
@@ -209,7 +215,6 @@ ertib_price_list = {
 def callback_handler(call):
     user_id = call.from_user.id
     typ = call.data[2:]
-    print(call.data)
 
     with open('users.json', 'r') as f:
         data = json.load(f)
@@ -217,7 +222,6 @@ def callback_handler(call):
             if data[str(user_id)]["phone_number"]:
                 if "**" in call.data:
                     file_name = call.data.split("+")[1]
-                    # print(file_name, 99)
                     ext = file_name.split(".")[-1]
                     if ext == "pdf":
                         with open(file_name, 'rb') as file:
@@ -235,13 +239,23 @@ def callback_handler(call):
                     cap = Welcome_back[data[str(user_id)]["lang"]].format(num_pages, price)
                     bot.send_message(call.message.chat.id, cap, reply_markup=markup)
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-                elif call.data in [ "ENGLISH","AMHARIC","AFFAN_OROMO","Tigrinya" ]:
+                elif call.data in ["ENGLISH", "AMHARIC", "AFFAN_OROMO", "Tigrinya"]:
                     with open('users.json', 'w') as fz:
                         data[str(user_id)]["lang"] = call.data
 
                         json.dump(dict(data), fz, indent=4)
+                    markup = telebot.types.ReplyKeyboardMarkup(
+                        row_width=2, resize_keyboard=True)
+
+                    item1 = telebot.types.KeyboardButton(text=delivery[data[str(user_id)]["lang"]])
+                    item2 = telebot.types.KeyboardButton(text=printt[data[str(user_id)]["lang"]])
+                    item5 = telebot.types.KeyboardButton(text=Language[data[str(user_id)]["lang"]])
+                    item4 = telebot.types.KeyboardButton(text=Referrals[data[str(user_id)]["lang"]])
+                    markup.add(item1, item2, item4, item5)
+                    bot.send_message(user_id, success[data[str(user_id)]["lang"]],
+                                     reply_markup=markup)
+
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-                    bot.send_message(call.message.chat.id,success[data[str(user_id)]["lang"]] , reply_markup=menu(str(user_id)))
                 elif "--" in call.data:
                     file_name = call.data.split("+")[1]
                     num_pages = int(typ.split("+")[0])
@@ -373,15 +387,22 @@ def name_input(message):
                          reply_markup=keyboard)
 
 
-def menu(user_id):
-    markup = telebot.types.ReplyKeyboardMarkup(
-        row_width=2, resize_keyboard=True)
-    item1 = telebot.types.KeyboardButton(text=delivery[data[user_id]["lang"]])
-    item2 = telebot.types.KeyboardButton(text=printt[data[user_id]["lang"]])
-    item5 = telebot.types.KeyboardButton(text=Language[data[user_id]["lang"]])
-    item4 = telebot.types.KeyboardButton(text=Referral[data[user_id]["lang"]])
-    markup.add(item1, item2, item4, item5, )
-    return markup
+def mssenu(user_id):
+    try:
+
+        print( user_id ,9999)
+
+        return markup
+    except Exception as e:
+        print(e)
+        markup = telebot.types.ReplyKeyboardMarkup(
+            row_width=2, resize_keyboard=True)
+        item1 = telebot.types.KeyboardButton(text="Delivery")
+        item2 = telebot.types.KeyboardButton(text="Language")
+        item5 = telebot.types.KeyboardButton(text="Print")
+        item4 = telebot.types.KeyboardButton(text="My Balance")
+        markup.add(item1, item2, item4, item5)
+        return markup
 
 
 @bot.message_handler(content_types=['contact'])
@@ -417,15 +438,22 @@ def phone_input(message):
                 data[user_id]["link"] = f"https://t.me/{bot.get_me().username}?start={uu}"
 
                 json.dump(dict(data), files, indent=4)
+            markup = telebot.types.ReplyKeyboardMarkup(
+                row_width=2, resize_keyboard=True)
+            item1 = telebot.types.KeyboardButton(text=delivery[data[user_id]["lang"]])
+            item2 = telebot.types.KeyboardButton(text=printt[data[user_id]["lang"]])
+            item5 = telebot.types.KeyboardButton(text=Language[data[user_id]["lang"]])
+            item4 = telebot.types.KeyboardButton(text=Referral[data[user_id]["lang"]])
+            markup.add(item1, item2, item4, item5)
             bot.send_message(
-                user_id, thanks_register[data[user_id]["lang"]], reply_markup=menu(user_id))
+                message.chat.id, thanks_register[data[user_id]["lang"]], reply_markup=markup)
         else:
-            bot.send_message(user_id, register_first[data[user_id]["lang"]])
+            bot.send_message(message.chat.id, register_first[data[user_id]["lang"]])
 
 
-while True:
-    try:
-        bot.polling(non_stop=True)
-    except Exception as e:
-        print(e)
-        time.sleep(3)
+# while True:
+#     try:
+bot.polling(non_stop=True)
+# except Exception as e:
+#     print(e)
+#     time.sleep(3)

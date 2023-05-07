@@ -187,7 +187,7 @@ Language = {
     "Tigrinya": "ቋንቋ"
 
 }
-Referral = {
+Referrals = {
     "ENGLISH": 'My Balance',
     "AMHARIC": "የእኔ ቀሪ ሂሳብ ",
     "AFFAN_OROMO": "Madaallii koo.",
