@@ -1,6 +1,7 @@
 import json
+import time
 import uuid
-
+import traceback
 import PyPDF2
 import docx
 import telebot
@@ -26,10 +27,10 @@ def start_command(message):
                 name = data[my_id]["real_name"]
                 markup = telebot.types.ReplyKeyboardMarkup(
                     row_width=2, resize_keyboard=True)
-                item1 = telebot.types.KeyboardButton(text=delivery[data[my_id]["lang"]])
+                item1 = telebot.types.KeyboardButton(text=deliveryy[data[my_id]["lang"]])
                 item2 = telebot.types.KeyboardButton(text=printt[data[my_id]["lang"]])
-                item5 = telebot.types.KeyboardButton(text=Language[data[my_id]["lang"]])
-                item4 = telebot.types.KeyboardButton(text=Referral[data[my_id]["lang"]])
+                item5 = telebot.types.KeyboardButton(text=Languagey[data[my_id]["lang"]])
+                item4 = telebot.types.KeyboardButton(text=Referrals[data[my_id]["lang"]])
                 markup.add(item1, item2, item4, item5)
                 bot.send_message(message.chat.id, Welcome_back[data[my_id]["lang"]].format(name),
                                  reply_markup=markup)
@@ -49,14 +50,14 @@ def start_command(message):
         coupon_code = message.text.split(' ')[1]
         user_id = coupon[coupon_code]["id"]
         if coupon_code in coupon and my_id not in coupon[coupon_code]["referred"]:
-            data[my_id] = {"invited": user_id}
+            data[my_id] = {"invited": user_id,"lang":"ENGLISH"}
             coupon[coupon_code]["referred"].append(my_id)
             coupon[coupon_code]["count"] += 1
             with open("coupon.json", "w") as fg:
                 json.dump(dict(coupon), fg, indent=4)
         with open("users.json", "w") as fg:
             json.dump(dict(data), fg, indent=4)
-        bot.send_message(message.chat.id, enter_your_name[data[my_id]["lang"]], reply_markup=ReplyKeyboardRemove())
+        bot.send_message(message.chat.id, enter_your_name["ENGLISH"], reply_markup=ReplyKeyboardRemove())
 
         return
     else:
@@ -89,7 +90,7 @@ def Stationary(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
     my_id = str(message.from_user.id)
-    markup = types.InlineKeyboardMarkup()
+    markup = types.InlineKeyboardMarkup(row_width=2)
     btn = types.InlineKeyboardButton(
         "ENGLISH",
         callback_data=f"ENGLISH")
@@ -236,7 +237,7 @@ def callback_handler(call):
                         after_paid[data[str(user_id)]["lang"]],
                         callback_data=f"--{num_pages}+{file_name}+{typ.split('+')[0]}")
                     markup.add(btn)
-                    cap = Welcome_back[data[str(user_id)]["lang"]].format(num_pages, price)
+                    cap = payment[data[str(user_id)]["lang"]].format(num_pages, price)
                     bot.send_message(call.message.chat.id, cap, reply_markup=markup)
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
                 elif call.data in ["ENGLISH", "AMHARIC", "AFFAN_OROMO", "Tigrinya"]:
@@ -247,9 +248,9 @@ def callback_handler(call):
                     markup = telebot.types.ReplyKeyboardMarkup(
                         row_width=2, resize_keyboard=True)
 
-                    item1 = telebot.types.KeyboardButton(text=delivery[data[str(user_id)]["lang"]])
+                    item1 = telebot.types.KeyboardButton(text=deliveryy[data[str(user_id)]["lang"]])
                     item2 = telebot.types.KeyboardButton(text=printt[data[str(user_id)]["lang"]])
-                    item5 = telebot.types.KeyboardButton(text=Language[data[str(user_id)]["lang"]])
+                    item5 = telebot.types.KeyboardButton(text=Languagey[data[str(user_id)]["lang"]])
                     item4 = telebot.types.KeyboardButton(text=Referrals[data[str(user_id)]["lang"]])
                     markup.add(item1, item2, item4, item5)
                     bot.send_message(user_id, success[data[str(user_id)]["lang"]],
@@ -298,7 +299,7 @@ def callback_handler(call):
                             in_id = data[data[str(idd)]['invited']]
                             in_coupon = in_id['coupon_code']
                             with open('coupon.json', 'w') as files:
-                                coupon[in_coupon]["coins"] += 10
+                                coupon[in_coupon]["coins"] += 0.2
                                 json.dump(dict(coupon), files, indent=4)
                         bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                                       reply_markup=None)
@@ -387,23 +388,6 @@ def name_input(message):
                          reply_markup=keyboard)
 
 
-def mssenu(user_id):
-    try:
-
-        print( user_id ,9999)
-
-        return markup
-    except Exception as e:
-        print(e)
-        markup = telebot.types.ReplyKeyboardMarkup(
-            row_width=2, resize_keyboard=True)
-        item1 = telebot.types.KeyboardButton(text="Delivery")
-        item2 = telebot.types.KeyboardButton(text="Language")
-        item5 = telebot.types.KeyboardButton(text="Print")
-        item4 = telebot.types.KeyboardButton(text="My Balance")
-        markup.add(item1, item2, item4, item5)
-        return markup
-
 
 @bot.message_handler(content_types=['contact'])
 def phone_input(message):
@@ -440,10 +424,10 @@ def phone_input(message):
                 json.dump(dict(data), files, indent=4)
             markup = telebot.types.ReplyKeyboardMarkup(
                 row_width=2, resize_keyboard=True)
-            item1 = telebot.types.KeyboardButton(text=delivery[data[user_id]["lang"]])
+            item1 = telebot.types.KeyboardButton(text=deliveryy[data[user_id]["lang"]])
             item2 = telebot.types.KeyboardButton(text=printt[data[user_id]["lang"]])
-            item5 = telebot.types.KeyboardButton(text=Language[data[user_id]["lang"]])
-            item4 = telebot.types.KeyboardButton(text=Referral[data[user_id]["lang"]])
+            item5 = telebot.types.KeyboardButton(text=Languagey[data[user_id]["lang"]])
+            item4 = telebot.types.KeyboardButton(text=Referrals[data[user_id]["lang"]])
             markup.add(item1, item2, item4, item5)
             bot.send_message(
                 message.chat.id, thanks_register[data[user_id]["lang"]], reply_markup=markup)
@@ -451,9 +435,10 @@ def phone_input(message):
             bot.send_message(message.chat.id, register_first[data[user_id]["lang"]])
 
 
-# while True:
-#     try:
-bot.polling(non_stop=True)
-# except Exception as e:
-#     print(e)
-#     time.sleep(3)
+while True:
+    try:
+        bot.polling(non_stop=True)
+    except Exception as e:
+        traceback.print_exc()
+        time.sleep(3)
+

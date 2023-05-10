@@ -79,10 +79,10 @@ after_paid = {
 }
 
 payment = {
-    "ENGLISH": "Total Pages :- { }\nPrice :- { }\nPayment Methods\n    - CBE (100987543)\n    - Telebirr (0987654321)",
-    "AMHARIC": "ጠቅላላ ገፆች :- { }\nዋጋ :- { }\nየመክፈያ ዘዴዎች\n    - CBE (100987543)\n    - Telebirr (0987654321)",
-    "AFFAN_OROMO": "Fuula Waliigalaa :- { }\nGatii :- { }\nMala Kaffaltii\n    - CBE (100987543)\n    - Telebirr (0987654321)",
-    "Tigrinya": "ጠቕላላ ገጻት። :- { }\nዋጋ :- { }\nኣገባብ ክፍሊት\n    - CBE (100987543)\n    - Telebirr (0987654321)",
+    "ENGLISH": "Total Pages :- {}\nPrice :- {}\nPayment Methods\n    - CBE (100987543)\n    - Telebirr (0987654321)",
+    "AMHARIC": "ጠቅላላ ገፆች :- {}\nዋጋ :- {}\nየመክፈያ ዘዴዎች\n    - CBE (100987543)\n    - Telebirr (0987654321)",
+    "AFFAN_OROMO": "Fuula Waliigalaa :- {}\nGatii :- {}\nMala Kaffaltii\n    - CBE (100987543)\n    - Telebirr (0987654321)",
+    "Tigrinya": "ጠቕላላ ገጻት። :- {}\nዋጋ :- {}\nኣገባብ ክፍሊት\n    - CBE (100987543)\n    - Telebirr (0987654321)",
 
 }
 
@@ -112,8 +112,8 @@ payment_not_verified = {
     "Tigrinya": "ክፍሊት ኣይተረጋገጸን።"
 }
 capp = {
-    "ENGLISH": "Item     :- { } Ertib\nQuantity :- { }\n"
-               "Price    :- { }\n"
+    "ENGLISH": "Item     :- {} Ertib\nQuantity :- {}\n"
+               "Price    :- {}\n"
                "Payment Methods  \n"
                "   - CBE (100987543) \n"
                "   - Telebirr (0987654321) ",
@@ -166,7 +166,7 @@ c_lang = {
     "Tigrinya": "ቋንቋ ምረጽ"
 
 }
-delivery = {
+deliveryy = {
     "ENGLISH": "Delivery",
     "AMHARIC": "ማድረስ",
     "AFFAN_OROMO": "Qaqqabsiisuu",
@@ -180,7 +180,7 @@ printt = {
     "Tigrinya": "ሕትመት"
 
 }
-Language = {
+Languagey = {
     "ENGLISH": 'Language',
     "AMHARIC": "ቋንቋ",
     "AFFAN_OROMO": "Afaan",
