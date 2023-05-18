@@ -25,11 +25,11 @@ enter_your_name = {
     "AFFAN_OROMO": "Akkam ! Mee maqaa keessan galchaa.",
     "Tigrinya": "ሰላም ! በጃኹም ስምኩም ኣእትዉ።"
 }
-ertib_menu = {
-    "ENGLISH": "Ertib from Tulu dimtu",
-    "AMHARIC": "Ertib from Tulu dimtu",
-    "AFFAN_OROMO": "Ertib from Tulu dimtu",
-    "Tigrinya": "Ertib from Tulu dimtu"
+deliveray = {
+    "ENGLISH": "What do you want",
+    "AMHARIC": "What do you want",
+    "AFFAN_OROMO": "What do you want",
+    "Tigrinya": "What do you want"
 }
 register_first = {
     "ENGLISH": "Please register first /start.",
@@ -70,19 +70,45 @@ sorry_file = {
     "AFFAN_OROMO": "Dhiifama, Faayilota PDF ykn DOC fi DOCX qofa fudhanna.",
     "Tigrinya": "ይቕሬታ፡ PDF ወይ DOCን DOCXን ፋይላት ጥራይ ኢና ንቕበል።"
 }
-
 after_paid = {
     "ENGLISH": "Click this button after you paid",
     "AMHARIC": "ከከፈሉ በኋላ ይህን ቁልፍ ይጫኑ",
     "AFFAN_OROMO": "Erga kaffaltanii booda button kana cuqaasaa",
     "Tigrinya": "ድሕሪ ምኽፋልኩም ነዚ ቁልፊ ጠውቑ"
 }
+pay_cash = {
+    "ENGLISH": "Pay with CASH",
+    "AMHARIC": "Pay with CASH",
+    "AFFAN_OROMO": "Pay with CASH",
+    "Tigrinya": "Pay with CASH"
+}
+
+pay_falcon = {
+    "ENGLISH": "Pay with FALCON COIN",
+    "AMHARIC": "Pay with FALCON COIN",
+    "AFFAN_OROMO": "Pay with FALCON COIN",
+    "Tigrinya": "Pay with FALCON COIN"
+}
+
+not_coins = {
+    "ENGLISH": "You don't have enough coins",
+    "AMHARIC": "You don't have enough coins",
+    "AFFAN_OROMO": "You don't have enough coins",
+    "Tigrinya": "You don't have enough coins"
+}
 
 payment = {
-    "ENGLISH": "Total Pages :- {}\nPrice :- {}\nPayment Methods\n    - CBE (100987543)\n    - Telebirr (0987654321)",
-    "AMHARIC": "ጠቅላላ ገፆች :- {}\nዋጋ :- {}\nየመክፈያ ዘዴዎች\n    - CBE (100987543)\n    - Telebirr (0987654321)",
-    "AFFAN_OROMO": "Fuula Waliigalaa :- {}\nGatii :- {}\nMala Kaffaltii\n    - CBE (100987543)\n    - Telebirr (0987654321)",
-    "Tigrinya": "ጠቕላላ ገጻት። :- {}\nዋጋ :- {}\nኣገባብ ክፍሊት\n    - CBE (100987543)\n    - Telebirr (0987654321)",
+    "ENGLISH": "Total Pages :- {}\nPrice :- {}",
+    "AMHARIC": "ጠቅላላ ገፆች :- {}\nዋጋ :- {}",
+    "AFFAN_OROMO": "Fuula Waliigalaa :- {}\nGatii :- {}",
+    "Tigrinya": "ጠቕላላ ገጻት። :- {}\nዋጋ :- {}",
+
+}
+payment_lang = {
+    "ENGLISH": "Payment Methods\n",
+    "AMHARIC": "የመክፈያ ዘዴዎች\n",
+    "AFFAN_OROMO": "Mala Kaffaltii\n",
+    "Tigrinya": "ኣገባብ ክፍሊት\n",
 
 }
 
@@ -113,25 +139,16 @@ payment_not_verified = {
 }
 capp = {
     "ENGLISH": "Item     :- {} Ertib\nQuantity :- {}\n"
-               "Price    :- {}\n"
-               "Payment Methods  \n"
-               "   - CBE (100987543) \n"
-               "   - Telebirr (0987654321) ",
+               "Price    :- {}\n" ,
     "AMHARIC": """ንጥል፡- {} Ertib \n ብዛት፡- {} \n
                 ዋጋ፡- {} \n
-                የመክፈያ ዘዴዎች \n
-                   - CBE (100987543) \n
-                   - Telebirr (0987654321)""",
+               """,
     "AFFAN_OROMO": """Wanti :- {} Ertib \n Baay'ina :- {} \n
                     Gatii :- {} \n
-                    Mala Kaffaltii \n
-                       - CBE (100987543) \n
-                       - Telebirr (0987654321) .""",
+                  """,
     "Tigrinya": """ ኣቕሓ :- {} ኤርቲብ \n ብዝሒ :- {} \n
                 ዋጋ :- {} \n
-                ኣገባብ ክፍሊት \n
-                   - ሲቢኢ (100987543) \n
-                   - ቴሌቢር (0987654321)"""
+        """
 }
 
 dont_write = {

@@ -1,7 +1,8 @@
 import json
 import time
-import uuid
 import traceback
+import uuid
+
 import PyPDF2
 import docx
 import telebot
@@ -14,7 +15,8 @@ bot = telebot.TeleBot('6034077201:AAHICg_ZMoB6knQ8atPjdmmt9DgvKE_Obec')
 
 data = {}
 
-def menu(my_id,data):
+
+def menu(my_id, data):
     markup = telebot.types.ReplyKeyboardMarkup(
         row_width=2, resize_keyboard=True)
     item1 = telebot.types.KeyboardButton(text=deliveryy[data[my_id]["lang"]])
@@ -23,8 +25,10 @@ def menu(my_id,data):
     item4 = telebot.types.KeyboardButton(text=Referrals[data[my_id]["lang"]])
     item6 = telebot.types.KeyboardButton(text=allmart[data[my_id]["lang"]])
     item7 = telebot.types.KeyboardButton(text=help[data[my_id]["lang"]])
-    markup.add(item1, item2, item4, item5,item6,item7)
-    return  markup
+    markup.add(item1, item2, item4, item5, item6, item7)
+    return markup
+
+
 @bot.message_handler(commands=['start'])
 def start_command(message):
     # Check if user is already registered
@@ -36,7 +40,7 @@ def start_command(message):
             if data[my_id]["phone_number"]:
                 name = data[my_id]["real_name"]
                 bot.send_message(message.chat.id, Welcome_back[data[my_id]["lang"]].format(name),
-                                 reply_markup=menu(my_id,data))
+                                 reply_markup=menu(my_id, data))
 
             else:
                 keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
@@ -53,7 +57,7 @@ def start_command(message):
         coupon_code = message.text.split(' ')[1]
         user_id = coupon[coupon_code]["id"]
         if coupon_code in coupon and my_id not in coupon[coupon_code]["referred"]:
-            data[my_id] = {"invited": user_id,"lang":"ENGLISH"}
+            data[my_id] = {"invited": user_id, "lang": "ENGLISH"}
             coupon[coupon_code]["referred"].append(my_id)
             coupon[coupon_code]["count"] += 1
             with open("coupon.json", "w") as fg:
@@ -70,9 +74,9 @@ def start_command(message):
         bot.send_message(message.chat.id, enter_your_name[data[my_id]["lang"]], reply_markup=ReplyKeyboardRemove())
 
 
-@bot.message_handler(func=lambda message: message.text in ["Help" ])
+@bot.message_handler(func=lambda message: message.text in ["Help"])
 def Help(message):
-    bot.send_message(message.chat.id,  "0912345678 \n @abcd" )
+    bot.send_message(message.chat.id, "0912345678 \n @abcd")
 
 
 @bot.message_handler(func=lambda message: message.text in ["Delivery", "ምብፃሕ", "Qaqqabsiisuu", "ማድረስ"])
@@ -82,7 +86,7 @@ def Delivery(message):
         my_id = str(message.from_user.id)
         if my_id in data:
             if data[my_id]["phone_number"]:
-                bot.send_message(message.chat.id, ertib_menu[data[my_id]["lang"]], reply_markup=delivery_choice())
+                bot.send_message(message.chat.id, deliveray[data[my_id]["lang"]], reply_markup=delivery_choice())
             else:
                 keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
                 button = types.KeyboardButton(text=Send_Phone[data[my_id]["lang"]], request_contact=True)
@@ -196,16 +200,16 @@ def print_choice(file_name):
     markup = types.InlineKeyboardMarkup()
     for ans in ["Normal print", "Color print", "Normal print with blaaa", "Color print with blaaa"]:
         btn = types.InlineKeyboardButton(
-            ans, callback_data=f"**{ans}+{file_name}")
+            ans, callback_data=f"-prints{ans}+{file_name}")
         markup.add(btn)
     return markup
 
 
 def delivery_choice():
     markup = types.InlineKeyboardMarkup()
-    for ans in ["Normal", "Normal Plus", "Special"]:
+    for ans in ["Normal Ertib", "Special Ertib", "Premium Ertib", "Plumpy Nut"]:
         btn = types.InlineKeyboardButton(
-            ans, callback_data=f"=={ans}")
+            ans, callback_data=f"-Deli{ans}")
         markup.add(btn)
     return markup
 
@@ -215,8 +219,10 @@ print_price_list = {
 }
 
 ertib_price_list = {
-    "Normal": 45, "Normal Plus": 50, "Special": 55
+    "Normal Ertib": 45, "Special Ertib": 50, "Premium Ertib": 55, "Plumpy Nut": 35,
 }
+
+payment_gateway = ["    - CBE (100987543)\n", "   - Telebirr (0987654321)\n"]
 
 
 # create a function to handle user input
@@ -229,7 +235,8 @@ def callback_handler(call):
         data = json.load(f)
         if str(user_id) in data:
             if data[str(user_id)]["phone_number"]:
-                if "**" in call.data:
+                if "-prints" in call.data:
+                    typ = call.data[7:]
                     file_name = call.data.split("+")[1]
                     ext = file_name.split(".")[-1]
                     if ext == "pdf":
@@ -239,34 +246,70 @@ def callback_handler(call):
                     else:
                         doc = docx.Document(file_name)
                         num_pages = len(doc.sections)
+
                     price = num_pages * print_price_list[typ.split('+')[0]]
+
                     markup = types.InlineKeyboardMarkup()
                     btn = types.InlineKeyboardButton(
-                        after_paid[data[str(user_id)]["lang"]],
-                        callback_data=f"--{num_pages}+{file_name}+{typ.split('+')[0]}")
-                    markup.add(btn)
+                        pay_cash[data[str(user_id)]["lang"]],
+                        callback_data=f"-print_cash{num_pages}+{file_name}+{call.data[6:].split('+')[0]}+{price}")
+                    btn2 = types.InlineKeyboardButton(
+                        pay_falcon[data[str(user_id)]["lang"]],
+                        callback_data=f"-print_coin{num_pages}+{file_name}+{call.data[6:].split('+')[0]}+{price}")
+
+                    markup.add(btn, btn2)
                     cap = payment[data[str(user_id)]["lang"]].format(num_pages, price)
                     bot.send_message(call.message.chat.id, cap, reply_markup=markup)
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-                elif call.data in ["ENGLISH", "AMHARIC", "AFFAN_OROMO", "Tigrinya"]:
-                    with open('users.json', 'w') as fz:
-                        data[str(user_id)]["lang"] = call.data
+                elif "-print_cash" in call.data:
+                    typ=call.data[11:]
+                    num_pages, file_name, ty, price = typ.split("+")
 
-                        json.dump(dict(data), fz, indent=4)
-                    bot.send_message(user_id, success[data[str(user_id)]["lang"]],
-                                     reply_markup=menu(str(user_id),data))
+                    mark = types.InlineKeyboardMarkup(row_width=2)
+                    btn = types.InlineKeyboardButton(
+                        after_paid[data[str(user_id)]["lang"]], callback_data=f"-f_print{num_pages}+{file_name}+{call.data[6:].split('+')[0]}+{price}")
+                    mark.add(btn)
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-                elif "--" in call.data:
-                    file_name = call.data.split("+")[1]
-                    num_pages = int(typ.split("+")[0])
-                    ty = typ.split("+")[-1]
+                    cap = payment_lang[data[str(user_id)]["lang"]] + "".join(payment_gateway)
+
+                    bot.send_message(user_id,  cap, reply_markup=mark)
+                elif "-print_coin" in call.data:
+                    with open('coupon.json', 'r') as file:
+                        coupon = json.load(file)
+                    typ=call.data[11:]
+                    num_pages, file_name, ty, price = typ.split("+")
+                    coinss = coupon[data[str(user_id)]["coupon_code"]]["coins"]
+                    sub = float(price) / 10
+                    if coinss>=sub:
+                        with open('coupon.json', 'w') as files:
+                            coupon[data[str(user_id)]["coupon_code"]]["coins"] -= sub
+                            json.dump(dict(coupon), files, indent=4)
+                        num_pages, file_name, ty, price = typ.split("+")
+                        cap = f"From         :- {data[str(user_id)]['real_name']}\n" \
+                              f"Phone Number :- {data[str(user_id)]['phone_number']}\n" \
+                              f"Type         :- {ty}\n" \
+                              f"No page      :- {num_pages}\n" \
+                              f"Price        :- {price}"
+
+                        with open(file_name, 'rb') as file:
+                            bot.send_document(chat_id="-1001674209692", document=file, caption=cap)
+                        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                        bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]])
+                    else:
+                        markup = types.InlineKeyboardMarkup()
+                        btn = types.InlineKeyboardButton(
+                            pay_cash[data[str(user_id)]["lang"]],
+                            callback_data=f"-print_cash{num_pages}+{file_name}+{call.data[6:].split('+')[0]}+{price}")
+                        markup.add(btn)
+                        bot.send_message(user_id, not_coins[data[str(user_id)]["lang"]], reply_markup=markup)
+                elif "-f_print" in call.data:
+                    num_pages, file_name, ty, price = typ.split("+")
                     cap = f"From         :- {data[str(user_id)]['real_name']}\n" \
                           f"Phone Number :- {data[str(user_id)]['phone_number']}\n" \
                           f"Type         :- {ty}\n" \
                           f"No page      :- {num_pages}\n" \
-                          f"Price        :- {num_pages * print_price_list[ty]}"
+                          f"Price        :- {price}"
                     mark = types.InlineKeyboardMarkup(row_width=2)
-
                     btn = types.InlineKeyboardButton(
                         "Real", callback_data=f"((Real_{user_id}")
                     btn2 = types.InlineKeyboardButton(
@@ -274,15 +317,21 @@ def callback_handler(call):
                     mark.add(btn, btn2)
                     with open(file_name, 'rb') as file:
                         bot.send_document(chat_id="-1001674209692", document=file, caption=cap, reply_markup=mark)
-
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-
                     bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]])
-                elif "==" in call.data:
-                    query = call.data[2:]
+                elif call.data in ["ENGLISH", "AMHARIC", "AFFAN_OROMO", "Tigrinya"]:
+                    with open('users.json', 'w') as fz:
+                        data[str(user_id)]["lang"] = call.data
+
+                        json.dump(dict(data), fz, indent=4)
+                    bot.send_message(user_id, success[data[str(user_id)]["lang"]],
+                                     reply_markup=menu(str(user_id), data))
+                    bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                elif "-Deli" in call.data:
+                    query = call.data[5:]
                     markup = types.InlineKeyboardMarkup(row_width=3)
                     a = [types.InlineKeyboardButton(
-                        ans, callback_data=f"||{ans}_{query}") for ans in range(1, 13)]
+                        ans, callback_data=f"+Deli{ans}_{query}") for ans in range(1, 13)]
                     markup.add(*a[0:3])
                     markup.add(*a[3:6])
                     markup.add(*a[6:9])
@@ -307,36 +356,82 @@ def callback_handler(call):
                         return
                     bot.send_message(typ.split("_")[-1], payment_not_verified[data[str(user_id)]["lang"]])
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-                elif "||" in call.data:
-                    no, typpe = call.data[2:].split("_")
+
+                elif "+Deli" in call.data:
+                    no, typpe = call.data[5:].split("_")
+
                     price = int(no) * ertib_price_list[typpe]
                     markup = types.InlineKeyboardMarkup()
                     btn = types.InlineKeyboardButton(
-                        after_paid[data[str(user_id)]["lang"]], callback_data=f"!!{no}+{price}+{typpe}")
-                    markup.add(btn)
+                        pay_cash[data[str(user_id)]["lang"]], callback_data=f"-Cash{no}+{price}+{typpe}")
+                    btn2 = types.InlineKeyboardButton(
+                        pay_falcon[data[str(user_id)]["lang"]], callback_data=f"-Falcon{no}+{price}+{typpe}")
+                    markup.add(btn, btn2)
                     cap = capp[data[str(user_id)]["lang"]].format(typpe, no, price)
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
                     bot.send_message(call.message.chat.id, cap, reply_markup=markup)
-                elif "!!" in call.data:
+                elif "-Cash" in call.data:
+                    typ = call.data[5:]
+                    Quantity = int(typ.split("+")[0])
+                    ty = call.data.split("+")[-1]
+                    price = typ.split("+")[1]
+                    markup = types.InlineKeyboardMarkup()
+                    btn = types.InlineKeyboardButton(
+                        after_paid[data[str(user_id)]["lang"]], callback_data=f"-paid{Quantity}+{price}+{ty}")
+                    markup.add(btn)
+                    bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                    cap = payment_lang[data[str(user_id)]["lang"]] + "".join(payment_gateway)
+                    bot.send_message(user_id, cap, reply_markup=markup)
+                elif "-paid" in call.data:
+                    typ = call.data[5:]
                     Quantity = int(typ.split("+")[0])
                     ty = call.data.split("+")[-1]
                     price = typ.split("+")[1]
                     cap = f"From :- {data[str(user_id)]['real_name']}   " \
                           f"\n Phone Number :- {data[str(user_id)]['phone_number']}  " \
-                          f" \n Type         :- {ty} Ertib   " \
+                          f" \n Type         :- {ty}   " \
                           f" \n  Quantity      :- {Quantity}" \
                           f" \n Price        :- {price} "
                     mark = types.InlineKeyboardMarkup(row_width=2)
-
-                    btnn = types.InlineKeyboardButton(
+                    btn = types.InlineKeyboardButton(
                         "Real", callback_data=f"((Real_{user_id}")
-                    btnn2 = types.InlineKeyboardButton(
+                    btn2 = types.InlineKeyboardButton(
                         "Fake", callback_data=f"((Fake_{user_id}")
-                    mark.add(btnn, btnn2)
+                    mark.add(btn, btn2)
                     bot.send_message(chat_id="-1001674209692", text=cap, reply_markup=mark)
 
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
                     bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]])
+
+                elif "-Falcon" in call.data:
+                    typ = call.data[7:]
+                    with open('coupon.json', 'r') as file:
+                        coupon = json.load(file)
+                    coinss = coupon[data[str(user_id)]["coupon_code"]]["coins"]
+                    Quantity = int(typ.split("+")[0])
+                    ty = call.data.split("+")[-1]
+                    price = typ.split("+")[1]
+                    sub = float(price) / 10
+                    if coinss >= sub:
+                        with open('coupon.json', 'w') as files:
+                            coupon[data[str(user_id)]["coupon_code"]]["coins"] -= sub
+                            json.dump(dict(coupon), files, indent=4)
+                        cap = f"From :- {data[str(user_id)]['real_name']}   " \
+                              f"\n Phone Number :- {data[str(user_id)]['phone_number']}  " \
+                              f" \n Type         :- {ty}    " \
+                              f" \n  Quantity      :- {Quantity}" \
+                              f" \n Price        :- {price} "
+
+                        bot.send_message(chat_id="-1001674209692", text=cap )
+                        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+                        bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]])
+                    else:
+                        markup = types.InlineKeyboardMarkup()
+                        btn = types.InlineKeyboardButton(
+                            pay_cash[data[str(user_id)]["lang"]], callback_data=f"-Cash{Quantity}+{price}+{ty}")
+                        markup.add(btn)
+                        bot.send_message(user_id, not_coins[data[str(user_id)]["lang"]], reply_markup=markup)
+
             else:
                 keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
                 button = types.KeyboardButton(text=Send_Phone[data[str(user_id)]["lang"]], request_contact=True)
@@ -387,7 +482,6 @@ def name_input(message):
                          reply_markup=keyboard)
 
 
-
 @bot.message_handler(content_types=['contact'])
 def phone_input(message):
     user_id = str(message.from_user.id)
@@ -422,7 +516,7 @@ def phone_input(message):
 
                 json.dump(dict(data), files, indent=4)
             bot.send_message(
-                message.chat.id, thanks_register[data[user_id]["lang"]], reply_markup=menu(user_id,data))
+                message.chat.id, thanks_register[data[user_id]["lang"]], reply_markup=menu(user_id, data))
         else:
             bot.send_message(message.chat.id, register_first[data[user_id]["lang"]])
 
@@ -433,4 +527,3 @@ while True:
     except Exception as e:
         traceback.print_exc()
         time.sleep(3)
-
