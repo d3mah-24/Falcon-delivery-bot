@@ -14,7 +14,17 @@ bot = telebot.TeleBot('6034077201:AAHICg_ZMoB6knQ8atPjdmmt9DgvKE_Obec')
 
 data = {}
 
-
+def menu(my_id,data):
+    markup = telebot.types.ReplyKeyboardMarkup(
+        row_width=2, resize_keyboard=True)
+    item1 = telebot.types.KeyboardButton(text=deliveryy[data[my_id]["lang"]])
+    item2 = telebot.types.KeyboardButton(text=printt[data[my_id]["lang"]])
+    item5 = telebot.types.KeyboardButton(text=Languagey[data[my_id]["lang"]])
+    item4 = telebot.types.KeyboardButton(text=Referrals[data[my_id]["lang"]])
+    item6 = telebot.types.KeyboardButton(text=allmart[data[my_id]["lang"]])
+    item7 = telebot.types.KeyboardButton(text=help[data[my_id]["lang"]])
+    markup.add(item1, item2, item4, item5,item6,item7)
+    return  markup
 @bot.message_handler(commands=['start'])
 def start_command(message):
     # Check if user is already registered
@@ -25,15 +35,8 @@ def start_command(message):
         if len(data[my_id]) > 2:
             if data[my_id]["phone_number"]:
                 name = data[my_id]["real_name"]
-                markup = telebot.types.ReplyKeyboardMarkup(
-                    row_width=2, resize_keyboard=True)
-                item1 = telebot.types.KeyboardButton(text=deliveryy[data[my_id]["lang"]])
-                item2 = telebot.types.KeyboardButton(text=printt[data[my_id]["lang"]])
-                item5 = telebot.types.KeyboardButton(text=Languagey[data[my_id]["lang"]])
-                item4 = telebot.types.KeyboardButton(text=Referrals[data[my_id]["lang"]])
-                markup.add(item1, item2, item4, item5)
                 bot.send_message(message.chat.id, Welcome_back[data[my_id]["lang"]].format(name),
-                                 reply_markup=markup)
+                                 reply_markup=menu(my_id,data))
 
             else:
                 keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
@@ -65,6 +68,11 @@ def start_command(message):
         with open("users.json", "w") as fg:
             json.dump(dict(data), fg, indent=4)
         bot.send_message(message.chat.id, enter_your_name[data[my_id]["lang"]], reply_markup=ReplyKeyboardRemove())
+
+
+@bot.message_handler(func=lambda message: message.text in ["Help" ])
+def Help(message):
+    bot.send_message(message.chat.id,  "0912345678 \n @abcd" )
 
 
 @bot.message_handler(func=lambda message: message.text in ["Delivery", "ምብፃሕ", "Qaqqabsiisuu", "ማድረስ"])
@@ -245,17 +253,8 @@ def callback_handler(call):
                         data[str(user_id)]["lang"] = call.data
 
                         json.dump(dict(data), fz, indent=4)
-                    markup = telebot.types.ReplyKeyboardMarkup(
-                        row_width=2, resize_keyboard=True)
-
-                    item1 = telebot.types.KeyboardButton(text=deliveryy[data[str(user_id)]["lang"]])
-                    item2 = telebot.types.KeyboardButton(text=printt[data[str(user_id)]["lang"]])
-                    item5 = telebot.types.KeyboardButton(text=Languagey[data[str(user_id)]["lang"]])
-                    item4 = telebot.types.KeyboardButton(text=Referrals[data[str(user_id)]["lang"]])
-                    markup.add(item1, item2, item4, item5)
                     bot.send_message(user_id, success[data[str(user_id)]["lang"]],
-                                     reply_markup=markup)
-
+                                     reply_markup=menu(str(user_id),data))
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
                 elif "--" in call.data:
                     file_name = call.data.split("+")[1]
@@ -422,15 +421,8 @@ def phone_input(message):
                 data[user_id]["link"] = f"https://t.me/{bot.get_me().username}?start={uu}"
 
                 json.dump(dict(data), files, indent=4)
-            markup = telebot.types.ReplyKeyboardMarkup(
-                row_width=2, resize_keyboard=True)
-            item1 = telebot.types.KeyboardButton(text=deliveryy[data[user_id]["lang"]])
-            item2 = telebot.types.KeyboardButton(text=printt[data[user_id]["lang"]])
-            item5 = telebot.types.KeyboardButton(text=Languagey[data[user_id]["lang"]])
-            item4 = telebot.types.KeyboardButton(text=Referrals[data[user_id]["lang"]])
-            markup.add(item1, item2, item4, item5)
             bot.send_message(
-                message.chat.id, thanks_register[data[user_id]["lang"]], reply_markup=markup)
+                message.chat.id, thanks_register[data[user_id]["lang"]], reply_markup=menu(user_id,data))
         else:
             bot.send_message(message.chat.id, register_first[data[user_id]["lang"]])
 

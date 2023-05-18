@@ -194,6 +194,20 @@ Referrals = {
     "Tigrinya": "የእኔ ቀሪ ሂሳብ "
 
 }
+allmart = {
+    "ENGLISH": 'All Mart',
+    "AMHARIC": "All Mart",
+    "AFFAN_OROMO": "All Mart",
+    "Tigrinya": "All Mart"
+
+}
+help = {
+    "ENGLISH": 'Help',
+    "AMHARIC": "Help",
+    "AFFAN_OROMO": "Help",
+    "Tigrinya": "Help"
+
+}
 success = {
     "ENGLISH": "Successfully Changed",
     "AMHARIC": "በተሳካ ሁኔታ ተቀይሯል",
