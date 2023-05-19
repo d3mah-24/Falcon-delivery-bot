@@ -97,6 +97,20 @@ not_coins = {
     "Tigrinya": "You don't have enough coins"
 }
 
+withdraw = {
+    "ENGLISH": "Do you want to withdraw falcon coin",
+    "AMHARIC": "Do you want to withdraw falcon coin",
+    "AFFAN_OROMO": "Do you want to withdraw falcon coin",
+    "Tigrinya": "Do you want to withdraw falcon coin"
+}
+
+how_much = {
+    "ENGLISH": "How much do you want  ",
+    "AMHARIC": "How much do you want  ",
+    "AFFAN_OROMO": "How much do you want",
+    "Tigrinya": "How much do you want   "
+}
+
 payment = {
     "ENGLISH": "Total Pages :- {}\nPrice :- {}",
     "AMHARIC": "ጠቅላላ ገፆች :- {}\nዋጋ :- {}",
