@@ -123,12 +123,10 @@ payment_lang = {
     "AMHARIC": "የመክፈያ ዘዴዎች\n",
     "AFFAN_OROMO": "Mala Kaffaltii\n",
     "Tigrinya": "ኣገባብ ክፍሊት\n",
-
 }
 
 thank_you = {
-    "ENGLISH": "Thank you for working with us.\nWithin 5 Min we will call you if you paid.\nif don't get any response "
-               "from us contact us 0912345678 ",
+    "ENGLISH": "Thank you for choosing our services.\nwe appreciate your business and look forward to serving you",
     "AMHARIC": "ከእኛ ጋር ስለሰሩ እናመሰግናለን። \n እና በ5 ደቂቃ ውስጥ ከከፈሉ እንጠራዎታለን። \n ከኛ ምንም ምላሽ ካላገኙ 0912345678 አግኙን።",
     "AFFAN_OROMO": "Nu waliin hojjechuu keessaniif galatoomaa. \fi Daqiiqaa 5 Keessatti yoo kaffaltan siif bilbilna. \n yoo deebii nurraa hin arganne 0912345678 nu qunnamaa",
     "Tigrinya": "ምሳና ስለ ዝሰራሕኩም የቐንየልና። \n ኣብ ውሽጢ 5 Min እንተኸፊልኩም ክንድውለልኩም ኢና። \n ካባና ዝኾነ መልሲ እንተዘይረኺብኩም 0912345678 ርኸቡና።"
@@ -198,46 +196,40 @@ c_lang = {
 
 }
 deliveryy = {
-    "ENGLISH": "Delivery",
+    "ENGLISH": "Swift Delivery Soaring With Falcon",
     "AMHARIC": "ማድረስ",
     "AFFAN_OROMO": "Qaqqabsiisuu",
     "Tigrinya": "ምብፃሕ"
-
 }
 printt = {
-    "ENGLISH": "Print",
+    "ENGLISH": "Print With Precision Powered By Falcon!",
     "AMHARIC": "ህትመት",
     "AFFAN_OROMO": "Maxxansa",
     "Tigrinya": "ሕትመት"
-
 }
 Languagey = {
     "ENGLISH": 'Language',
     "AMHARIC": "ቋንቋ",
     "AFFAN_OROMO": "Afaan",
     "Tigrinya": "ቋንቋ"
-
 }
 Referrals = {
-    "ENGLISH": 'My Balance',
+    "ENGLISH": 'Balance and referral',
     "AMHARIC": "የእኔ ቀሪ ሂሳብ ",
     "AFFAN_OROMO": "Madaallii koo.",
     "Tigrinya": "የእኔ ቀሪ ሂሳብ "
-
 }
 allmart = {
     "ENGLISH": 'All Mart',
     "AMHARIC": "All Mart",
     "AFFAN_OROMO": "All Mart",
     "Tigrinya": "All Mart"
-
 }
 help = {
     "ENGLISH": 'Help',
     "AMHARIC": "Help",
     "AFFAN_OROMO": "Help",
     "Tigrinya": "Help"
-
 }
 success = {
     "ENGLISH": "Successfully Changed",

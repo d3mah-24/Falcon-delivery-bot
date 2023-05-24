@@ -7,6 +7,7 @@ import PyPDF2
 import docx
 import telebot
 from telebot import types
+from telebot.formatting import hbold
 from telebot.types import ReplyKeyboardRemove
 
 from LANG import *
@@ -14,6 +15,9 @@ from LANG import *
 bot = telebot.TeleBot('6034077201:AAHICg_ZMoB6knQ8atPjdmmt9DgvKE_Obec')
 
 data = {}
+pay_data = {"CBE": "- CBE (1000385300291)", "CBE-BIRR": "- CBE-BIRR (0912334223)",
+            "Abyssinia": "- Abyssinia Bank (87740986)", "Lion": "- Lion Bank (0031157161553)",
+            "Telebirr": "- Telebirr (0912334223)"}
 
 
 def menu(my_id, data):
@@ -75,12 +79,14 @@ def start_command(message):
 
 @bot.message_handler(func=lambda message: message.text in ["Help"])
 def Help(message):
-    bot.send_message(message.chat.id, "0912345678 \n @abcd")
+    bot.send_message(message.chat.id,
+                     "For more info contact our service center \n0912334223 \n@grace_4_real")
 
 
 @bot.message_handler(func=lambda message: message.text in ["All Mart"])
 def All_Mart(message):
-    bot.send_message(message.chat.id, "Check out this channel \n https://t.me/the_Falcongroup")
+    bot.send_message(message.chat.id, hbold(
+        "subscribe the channel, Unleash your shopping potential \n The Falcon Group \n https://t.me/the_Falcongroup"))
 
 
 @bot.message_handler(func=lambda message: message.text in ["Delivery", "ምብፃሕ", "Qaqqabsiisuu", "ማድረስ"])
@@ -142,7 +148,7 @@ def Referral(message):
             markup.add(btn)
             bot.send_message(message.chat.id, referral_link[data[user_id]["lang"]].format(link))
             bot.send_message(message.chat.id,
-                             invite_have[data[user_id]["lang"]].format(count, coins),reply_markup=markup)
+                             invite_have[data[user_id]["lang"]].format(count, coins), reply_markup=markup)
 
 
 @bot.message_handler(func=lambda message: message.text == "Help")
@@ -299,10 +305,9 @@ def callback_handler(call):
                         bot.send_message(user_id, not_coins[data[str(user_id)]["lang"]])
                 elif "+withdraw" in call.data:
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-
                     no = call.data[9:]
                     markup = types.InlineKeyboardMarkup()
-                    for k, v in {"CBE": "- CBE (100987543)", "Telebirr": "- Telebirr (0987654321)"}.items():
+                    for k, v in pay_data.items():
                         btn = types.InlineKeyboardButton(
                             v, callback_data=f"==withdrawF{k}+{no}")
                         markup.add(btn)
