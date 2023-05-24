@@ -126,7 +126,7 @@ payment_lang = {
 }
 
 thank_you = {
-    "ENGLISH": "Thank you for choosing our services.\nwe appreciate your business and look forward to serving you",
+    "ENGLISH": "Thank you for choosing our {} services.\nwe appreciate your business and look forward to serving you",
     "AMHARIC": "ከእኛ ጋር ስለሰሩ እናመሰግናለን። \n እና በ5 ደቂቃ ውስጥ ከከፈሉ እንጠራዎታለን። \n ከኛ ምንም ምላሽ ካላገኙ 0912345678 አግኙን።",
     "AFFAN_OROMO": "Nu waliin hojjechuu keessaniif galatoomaa. \fi Daqiiqaa 5 Keessatti yoo kaffaltan siif bilbilna. \n yoo deebii nurraa hin arganne 0912345678 nu qunnamaa",
     "Tigrinya": "ምሳና ስለ ዝሰራሕኩም የቐንየልና። \n ኣብ ውሽጢ 5 Min እንተኸፊልኩም ክንድውለልኩም ኢና። \n ካባና ዝኾነ መልሲ እንተዘይረኺብኩም 0912345678 ርኸቡና።"
@@ -139,6 +139,12 @@ how_much = {
 }
 payment_verified = {
     "ENGLISH": "Payment verified",
+    "AMHARIC": "ክፍያ ተረጋግጧል",
+    "AFFAN_OROMO": "Kaffaltiin mirkanaa'e",
+    "Tigrinya": "ክፍሊት ተረጋጊጹ"
+}
+payment_Done = {
+    "ENGLISH": "Payment Done",
     "AMHARIC": "ክፍያ ተረጋግጧል",
     "AFFAN_OROMO": "Kaffaltiin mirkanaa'e",
     "Tigrinya": "ክፍሊት ተረጋጊጹ"
@@ -196,13 +202,13 @@ c_lang = {
 
 }
 deliveryy = {
-    "ENGLISH": "Swift Delivery Soaring With Falcon",
+    "ENGLISH": "Delivery",
     "AMHARIC": "ማድረስ",
     "AFFAN_OROMO": "Qaqqabsiisuu",
     "Tigrinya": "ምብፃሕ"
 }
 printt = {
-    "ENGLISH": "Print With Precision Powered By Falcon!",
+    "ENGLISH": "Print",
     "AMHARIC": "ህትመት",
     "AFFAN_OROMO": "Maxxansa",
     "Tigrinya": "ሕትመት"

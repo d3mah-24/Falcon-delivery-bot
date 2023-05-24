@@ -7,7 +7,6 @@ import PyPDF2
 import docx
 import telebot
 from telebot import types
-from telebot.formatting import hbold
 from telebot.types import ReplyKeyboardRemove
 
 from LANG import *
@@ -85,17 +84,19 @@ def Help(message):
 
 @bot.message_handler(func=lambda message: message.text in ["All Mart"])
 def All_Mart(message):
-    bot.send_message(message.chat.id, hbold(
-        "subscribe the channel, Unleash your shopping potential \n The Falcon Group \n https://t.me/the_Falcongroup"))
+    bot.send_message(message.chat.id,
+                     "subscribe the channel, Unleash your shopping potential \n The Falcon Group \n https://t.me/the_Falcongroup")
 
 
-@bot.message_handler(func=lambda message: message.text in ["Delivery", "ምብፃሕ", "Qaqqabsiisuu", "ማድረስ"])
+@bot.message_handler(
+    func=lambda message: message.text in ["Delivery", "ምብፃሕ", "Qaqqabsiisuu", "ማድረስ"])
 def Delivery(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
         my_id = str(message.from_user.id)
         if my_id in data:
             if data[my_id]["phone_number"]:
+                bot.send_message(message.chat.id,"Swift Delivery Soaring With Falcon")
                 bot.send_message(message.chat.id, deliveray[data[my_id]["lang"]], reply_markup=delivery_choice())
             else:
                 keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
@@ -131,7 +132,7 @@ def Stationary(message):
 
 
 @bot.message_handler(
-    func=lambda message: message.text in ['My Balance', "የእኔ ቀሪ ሂሳብ", "Madaallii koo.", "የእኔ ቀሪ ሂሳብ"])
+    func=lambda message: message.text in ['Balance and referral', "የእኔ ቀሪ ሂሳብ", "Madaallii koo.", "የእኔ ቀሪ ሂሳብ"])
 def Referral(message):
     user_id = str(message.from_user.id)
     with open('users.json', 'r') as f:
@@ -156,13 +157,15 @@ def Help(message):
     bot.send_message(message.chat.id, "Help")
 
 
-@bot.message_handler(func=lambda message: message.text in ["Print", "ህትመት", "Maxxansa", "ሕትመት"])
+@bot.message_handler(
+    func=lambda message: message.text in ["Print", "ህትመት", "Maxxansa", "ሕትመት"])
 def Pprint(message):
     with open('users.json', 'r') as f:
         data = json.load(f)
         my_id = str(message.from_user.id)
         if my_id in data:
             if data[my_id]["phone_number"]:
+                bot.send_message(message.chat.id, "Print With Precision Powered By Falcon!")
                 bot.send_message(message.chat.id, send_file[data[my_id]["lang"]])
 
             else:
@@ -294,12 +297,13 @@ def callback_handler(call):
                         coupon = json.load(file)
                     coinss = coupon[data[str(user_id)]["coupon_code"]]["coins"]
                     if coinss >= 1:
-                        markup = types.InlineKeyboardMarkup(row_width=2)
-                        for ans in range(1, 11):
-                            btn = types.InlineKeyboardButton(
-                                ans, callback_data=f"+withdraw{ans}")
-                            markup.add(btn)
-
+                        markup = types.InlineKeyboardMarkup(row_width=3)
+                        a = [types.InlineKeyboardButton(
+                                ans, callback_data=f"+withdraw{ans}") for ans in range(1, 13)]
+                        markup.add(*a[0:3])
+                        markup.add(*a[3:6])
+                        markup.add(*a[6:9])
+                        markup.add(*a[9:12])
                         bot.send_message(user_id, how_much[data[str(user_id)]["lang"]], reply_markup=markup)
                     else:
                         bot.send_message(user_id, not_coins[data[str(user_id)]["lang"]])
@@ -309,30 +313,27 @@ def callback_handler(call):
                     markup = types.InlineKeyboardMarkup()
                     for k, v in pay_data.items():
                         btn = types.InlineKeyboardButton(
-                            v, callback_data=f"==withdrawF{k}+{no}")
+                            k, callback_data=f"$withdrawF{k}+{no}")
                         markup.add(btn)
-
                     bot.send_message(user_id, payment_lang[data[str(user_id)]["lang"]], reply_markup=markup)
-                elif "==withdrawF" in call.data:
-                    ty, no = call.data[11:].split("+")
+
+                elif "$withdrawF" in call.data:
+                    ty, no = call.data[10:].split("+")
                     cap = f"From         :- {data[str(user_id)]['real_name']}\n" \
                           f"Phone Number :- {data[str(user_id)]['phone_number']}\n" \
                           f"Type         :- {ty}\n" \
                           f"Amount        :- {no}"
                     markup = types.InlineKeyboardMarkup()
                     btn = types.InlineKeyboardButton(
-                        "Done", callback_data=f"--withdrawF{str(user_id)}")
+                        "Done", callback_data=f"*withdrawF{str(user_id)}")
                     markup.add(btn)
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
                     bot.send_message(chat_id="-1001674209692", text=cap, reply_markup=markup)
-                    bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]])
+                    bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]].format("withdraw"))
 
-                elif "--withdrawF" in call.data:
-                    id = call.data[11:]
-                    # bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-
-                    bot.send_message(user_id, payment_verified[data[str(user_id)]["lang"]])
+                elif "*withdrawF" in call.data:
+                    bot.send_message(user_id, payment_Done[data[str(user_id)]["lang"]])
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
 
@@ -358,7 +359,7 @@ def callback_handler(call):
                         with open(file_name, 'rb') as file:
                             bot.send_document(chat_id="-1001674209692", document=file, caption=cap)
                         bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-                        bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]])
+                        bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]].format("Printing"))
                     else:
                         markup = types.InlineKeyboardMarkup()
                         btn = types.InlineKeyboardButton(
@@ -382,7 +383,7 @@ def callback_handler(call):
                     with open(file_name, 'rb') as file:
                         bot.send_document(chat_id="-1001674209692", document=file, caption=cap, reply_markup=mark)
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-                    bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]])
+                    bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]].format("Printing"))
                 elif call.data in ["ENGLISH", "AMHARIC", "AFFAN_OROMO", "Tigrinya"]:
                     with open('users.json', 'w') as fz:
                         data[str(user_id)]["lang"] = call.data
@@ -465,7 +466,7 @@ def callback_handler(call):
                     bot.send_message(chat_id="-1001674209692", text=cap, reply_markup=mark)
 
                     bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-                    bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]])
+                    bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]].format("Delivery"))
 
                 elif "-Falcon" in call.data:
                     typ = call.data[7:]
@@ -488,8 +489,10 @@ def callback_handler(call):
 
                         bot.send_message(chat_id="-1001674209692", text=cap)
                         bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
-                        bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]])
+                        bot.send_message(user_id, thank_you[data[str(user_id)]["lang"]].format("Delivery"))
                     else:
+                        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+
                         markup = types.InlineKeyboardMarkup()
                         btn = types.InlineKeyboardButton(
                             pay_cash[data[str(user_id)]["lang"]], callback_data=f"-Cash{Quantity}+{price}+{ty}")
@@ -519,7 +522,7 @@ def name_input(message):
 
     if user_id in data:
         if len(data[user_id]) < 3:
-            if "09" in text or "251" in text:
+            if "09" in text or "251" in text :
                 bot.send_message(message.chat.id,
                                  dont_write[data[user_id]["lang"]],
                                  reply_markup=keyboard)
@@ -536,6 +539,9 @@ def name_input(message):
         elif data[user_id]["phone_number"] is None:
             bot.send_message(message.chat.id, Please_Send_Phone[data[user_id]["lang"]],
                              reply_markup=keyboard)
+            return
+
+
 
     else:
         with open('users.json', 'w') as fz:
